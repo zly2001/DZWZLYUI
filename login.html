@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>登录</title>
-		<link rel="stylesheet" href="../../css/index.css" />
+		<link rel="stylesheet" href="css/index.css" />
 		<style>
 			.el-header,
 			.el-footer {
@@ -30,23 +30,45 @@
 	<body>
 		<div id="login">
 			<el-container>
-				<el-header style='height:10%;'>Header</el-header>
+				<el-header style='height:10%;'>登录</el-header>
 				<el-main>
-					<el-row>
-						<el-button type="primary" round>主要按钮</el-button>
-					</el-row>
+					<el-form :model="Employee" ref="personForm">
+						<el-row>
+							<el-col :span="12" :offset="10">
+								<el-form-item label="工号" prop="employeeid">
+									<el-col :span="6">
+										<!--非常重要-->
+										<el-input v-model.number="Employee.employeeid" placeholder="请输入工号"></el-input>
+									</el-col>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-row>
+							<el-col :span="12" :offset="10">
+								<el-form-item label="密码" prop="epwd">
+									<el-col :span="6">
+										<el-input v-model="Employee.epwd" placeholder="请输入密码"></el-input>
+									</el-col>
+								</el-form-item>
+							</el-col>
+						</el-row>
+						<el-form-item>
+							<el-button type="primary" @click="selectByLogin">登录</el-button>
+						</el-form-item>
+					</el-form>
 				</el-main>
-				<el-footer style='height:10%;'>Footer</el-footer>
+				<el-footer style='height:10%;'></el-footer>
 			</el-container>
 		</div>
 	</body>
-	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
-	<script type="text/javascript" src="../../js/vue.js"></script>
-	<script type="text/javascript" src="../../js/axios.min.js"></script>
-	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
-	<script type="text/javascript" src="../../js/index.js"></script>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
 	<script>
 		var login = new Vue({
+			el: '#login',
 			data: {
 				Employee: {
 					employeeid: '',
