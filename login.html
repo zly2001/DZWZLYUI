@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<link rel="stylesheet" href="../../css/index.css" />
+		<style>
+			.el-header,
+			.el-footer {
+				background-color: #B3C0D1;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			}
+			
+			.el-main {
+				background-color: #E9EEF3;
+				color: #333;
+				text-align: center;
+				line-height: 160px;
+			}
+			
+			body > .el-container {
+				margin-bottom: 40px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="login">
+			<el-container>
+				<el-header style='height:10%;'>Header</el-header>
+				<el-main>
+					<el-row>
+						<el-button type="primary" round>主要按钮</el-button>
+					</el-row>
+				</el-main>
+				<el-footer style='height:10%;'>Footer</el-footer>
+			</el-container>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/axios.min.js"></script>
+	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../../js/index.js"></script>
+	<script>
+		var login = new Vue({
+			data: {
+				Employee: {
+					employeeid: '',
+					epwd: ''
+				}
+			},
+			methods: {
+				selectByLogin() {
+					axios.get(`http://127.0.0.1:8080/FenLiu/api/PurchaserecordsAction/selectByAll`, this.Employee).then(function(resp) {
+						_this.Purchaserecords = resp.data;
+						if (resp.data.code == "200") {
+							this.$message({
+								message: '恭喜你，这是一条成功消息',
+								type: 'success'
+							});
+							document.location = "index.html";
+						} else {
+							this.$message.error('错了哦，这是一条错误消息');
+						}
+					});
+				}
+			}
+		})
+	</script>
+
+</html>
