@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<div id="app">
+			<button @click="isShow=true"  class="el-button el-button--danger">打开一个静态模态框</button>
+			<el-dialog :before-close="handlerClose" @opened="handlerOpen" :visible.sync="isShow" title="当前页面模态框" width="100%" center>
+				<div id="cnt" v-loading="loading">
+					<span>这是一段默认插槽内容</span>
+					<el-table :data="students" border>
+						<el-table-column prop="name" label="姓名"></el-table-column>
+						<el-table-column prop="sex" label="姓名"></el-table-column>
+					</el-table>
+				</div>
+				<span slot="footer" class="dialog-footer">
+	    			<el-button @click="isShow=false">取 消</el-button>
+	    			<el-button type="primary">确 定</el-button>
+  				</span>
+			</el-dialog>
+
+		</div>
+	</body>
+	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var app = new Vue({
+			data: {
+				loading:true,
+				isShow:false,
+				students: [{
+					name: '高富帅',
+					sex: '男'
+				}, {
+					name: '史真香',
+					sex: '女'
+				}]
+			},
+			methods: {
+				handlerClose(done){
+					this.$confirm('是否关闭?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						done();//关闭
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+				},
+				handlerOpen(){
+					//this.$alert('窗体加载');
+					$("#cnt").load("table.html");
+					loading:false;
+				}
+			}
+		}).$mount("#app");
+	</script>
+
+</html>

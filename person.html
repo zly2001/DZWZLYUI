@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>另外一个页面</title>
+	</head>
+
+	<body>
+		<div id="personApp" v-loading="loading">
+			<el-row>
+				<el-col :span="24">
+					<el-table :default-sort="{prop: 'pdate', order: 'descending'}" :data="this.pageInfo.list" border>
+						<el-table-column width="100" label="序号">
+							<template slot-scope="temp">
+								{{temp.$index+1}}
+							</template>
+						</el-table-column>
+						<el-table-column width="100" prop="pname" label="会员名称">
+						</el-table-column>
+						<el-table-column width="100" label="会员性别">
+							<template slot-scope="temp">
+								{{temp.row.psex | filterSex}}
+							</template>
+						</el-table-column>
+						<el-table-column width="150" prop="pdate" label="会员生日" sortable>
+						</el-table-column>
+						<el-table-column label="操作">
+							<template slot-scope="temp">
+								<el-button icon="el-icon-edit" size="mini" type="info" @click="showDialog(temp.row.pid)">模态框方式查看</el-button>
+								<el-button icon="el-icon-edit" size="mini" type="primary" @click="showInfo(temp.row.pid)">查看明细</el-button>
+								<el-button icon="el-icon-delete" size="mini" type="danger" @click="delInfo(temp.row.pid)">移除</el-button>
+							</template>
+						</el-table-column>
+					</el-table>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="24">
+					<el-pagination v-if="pageInfo.total!=0" :background="true" :pager-count="4" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageInfo.pageNum" :page-size="pageInfo.pageSize" :total="pageInfo.total" :page-sizes="[3,6]" layout="total, sizes, prev, pager, next, jumper">
+					</el-pagination>
+				</el-col>
+			</el-row>
+			<!--模态框-->
+			<el-dialog :destroy-on-close="true" @opened="handlOpen" title="会员信息" :visible.sync="isShow" :before-close="handleClose" center>
+				<div id="modalcnt"></div>
+			</el-dialog>
+		</div>
+	</body>
+	<script>
+		var personApp = new Vue({
+			el: '#personApp',
+			data: {
+				pageInfo: {},
+				loading: true,
+				isShow: false
+			},
+			methods: {
+				handlOpen() {
+					$("#modalcnt").load('info.html');
+				},
+				handleClose(done) {
+					this.$confirm('是否关闭').then(() => {
+						done();
+					}).catch(() => {});
+				},
+				showDialog(pid) {
+					this.isShow = true;
+					sessionStorage.setItem('pid', pid);
+				},
+				showInfo(pid) {
+					indexApp.showView('info.html');
+					sessionStorage.setItem('pid', pid);
+				},
+				delInfo(pid) {
+					let _this = this;
+					this.$confirm('是否移除会员信息?', '系统提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						axios.delete(`http://localhost:8080/springmvc_4/api/persons/person/${pid}`).then(function(resp) {
+							if(resp.data.code == "200") {
+								_this.$message({
+									type: 'success',
+									message: '删除成功!'
+								});
+								_this.loading = true;
+								_this.goToPage(1, _this.pageInfo.pageSize);
+							}
+						}).catch(function(e) {});
+
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+				},
+				handleSizeChange(val) {
+					this.goToPage(this.pageInfo.pageNum, val);
+				},
+				handleCurrentChange(val) {
+					this.goToPage(val, this.pageInfo.pageSize);
+				},
+				goToPage(p, s) {
+					let _this = this;
+					this.loading = true;
+					axios.get(`http://localhost:8080/springmvc_4/api/persons/${p}/${s}`).then(function(resp) {
+						_this.pageInfo = resp.data;
+						_this.loading = false;
+					}).catch(function(e) {});
+				}
+			},
+			mounted() {
+				this.goToPage(1, 3);
+			},
+			filters: {
+				filterSex(val) {
+					return val == 0 ? '男' : '女';
+				}
+			}
+		});
+	</script>
+
+</html>

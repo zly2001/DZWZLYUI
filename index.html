@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>后台管理页面参考</title>
+		<link rel="stylesheet" href="css/index.css" />
+		<style>
+			.el-header,
+			.el-footer {
+				background: gainsboro;
+				font-size: 30px;
+			}
+			
+			.el-menu {
+				border: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--12-->
+		<div id="indxApp">
+			<el-container style='height:95vh; border: 1px solid #eee'>
+				<el-header style='height:10%;'>汽修管理系统</el-header>
+				<el-container>
+					<el-aside width="200px">
+						<el-menu>
+							<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>商品管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>供货单位</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>维修项目</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+								<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>技工管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>技工星级</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>技工组车辆</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>技工组</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+							<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>数据管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>发动机品牌</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>车型档案</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+							<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>用户管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>用户车辆</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>用户管理</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>用户列表</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i></el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+								<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>系统管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>系统日志</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>角色附加</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>权限附加</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>基础数据</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>数据统计</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+								<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>维修管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>竣工检验</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>完工结算</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('Caculation.html')"><i class="el-icon-message"></i>维修开单</el-menu-item></el-menu-item-group>
+							</el-submenu>
+								<el-submenu>
+								<template slot="title">
+									<i class="el-icon-user"></i>
+									<span>职工管理</span>
+								</template>
+								<el-menu-item-group>
+									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>职工列表</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>离职登记</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>通讯目录</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>岗位定义</el-menu-item>
+								</el-menu-item-group>
+							</el-submenu>
+							
+							 <el-button type="danger" plain>退出系统</el-button>
+						</el-menu>
+					</el-aside>
+					<el-main>
+						<!--异步加载页面内容层-->
+						<div id="cnt"></div>
+					</el-main>
+				</el-container>
+				<el-footer style='height:10%;'>底部Log</el-footer>
+			</el-container>
+
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js" ></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+	//zly2
+		var indexApp = new Vue({
+			data: {
+				isShow: false
+			},
+			methods: {
+				showView(url) {
+					$("#cnt").load(url);
+				}
+			},
+			mounted() {
+				this.showView('work.html');
+			}
+		}).$mount('#indxApp');
+	</script>
+
+</html>

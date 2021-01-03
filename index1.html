@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<!--引入全局样式-->
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+	<style type="text/css">
+		.el-header {
+			background-color: #B3C0D1;
+			color: #333;
+			line-height: 60px;
+		}
+		
+		.el-aside {
+			color: #333;
+		}
+	</style>
+
+	<body>
+	<div id="app">
+			<el-table :data="persons"  border>
+				<el-table-column  label="序号" >
+					<!--作用域插槽-->
+					<template slot-scope="temp">
+						{{temp.$index+1}}
+					</template>
+				</el-table-column>
+				<el-table-column prop="pid" label="编号" ></el-table-column>
+				<el-table-column label="姓名" >
+					<!--作用域插槽-->
+					<template slot-scope="temp">
+						<a href="#">{{temp.row.pname}}</a>
+					</template>
+				</el-table-column>
+				<el-table-column  label="性别" >
+					<!--作用域插槽-->
+					<template slot-scope="temp">
+						{{temp.row.psex | changeSex}}
+					</template>
+				</el-table-column>
+				<el-table-column  label="操作" >
+					<template slot-scope="temp">
+						<el-button type="info" icon="el-icon-message" circle></el-button>
+						<el-button type="danger" icon="el-icon-delete" circle></el-button>
+					</template>
+				</el-table-column>
+			</el-table>
+		</div>
+	</body>
+	</body>
+	<!--引入VUE框架顺序不可逆-->
+	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	var app = new Vue({
+			data: {
+				persons: [{
+						pid: 100,
+						pname: '小红',
+						psex: 0
+					},
+					{
+						pid: 101,
+						pname: '小强',
+						psex: 1
+					},
+					{
+						pid: 102,
+						pname: '小华',
+						psex: 1
+					}
+				]
+			},
+			methods: {
+				removePerson(i, pid) {
+					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.persons.splice(i, 1);
+						this.$alert(`移除了${pid}`);
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+
+					//ajax发送请求
+				}
+			},
+			/*filters: {
+				changeSex(val) {
+					return val == 0 ? '男' : '女';
+				}
+			}*/
+		}).$mount("#app");
+	</script>
+
+</html>

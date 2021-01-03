@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<link rel="stylesheet" href="css/index.css" />
+
+	<body>
+		<div id="app">
+			<template>
+				<el-radio v-model="radio" label="1">现金支付</el-radio>
+				<el-radio v-model="radio" label="2">余额支付</el-radio>
+				<el-radio v-model="radio" label="3">网银支付</el-radio>
+			</template>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">客户</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">客户余额</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">维修单号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">收银员</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="0" v-model="input1">
+					<template slot="prepend">应付金额</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="0" v-model="input1">
+					<template slot="prepend">实付金额</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="0" v-model="input1">
+					<template slot="prepend">优惠</template>
+				</el-input>
+			</div>
+			备注
+			<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="textarea">
+			</el-input>
+			
+  <el-button type="success" plain>确定保存</el-button>
+  <el-button type="success" plain>单据打印</el-button>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					radio: '1'
+				};
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>
