@@ -10,6 +10,8 @@
 			.el-footer {
 				background: gainsboro;
 				font-size: 30px;
+				height: 80px;
+				line-height: 80px;
 			}
 			
 			.el-menu {
@@ -18,93 +20,101 @@
 		</style>
 	</head>
 
-	<body>		
+	<body>
 		<div id="indxApp">
 			<el-container style='height:95vh; border: 1px solid #eee'>
-				<el-header style='height:10%;'>汽修管理系统</el-header>
+				<el-header style='height:10%;'>
+					<el-row style="height: 80px;" type="flex" class="row-bg" justify="space-between">
+						<el-col :span="4">
+							张来遇汽修管理系统
+						</el-col>
+						<el-col :span="2" style="line-height: 65px;">
+							<el-button type="danger" plain>退出系统</el-button>
+						</el-col>
+					</el-row>
+				</el-header>
 				<el-container>
 					<el-aside width="200px">
 						<el-menu>
-							<el-submenu>
+							<el-submenu index="1">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-goods"></i>
 									<span>商品管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>供货单位</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>维修项目</el-menu-item>
+									<el-menu-item index="1-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>供货单位</el-menu-item>
+									<el-menu-item index="1-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>维修项目</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-								<el-submenu>
+							<el-submenu index="2">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-phone-outline"></i>
 									<span>技工管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>技工星级</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>技工组车辆</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>技工组</el-menu-item>
+									<el-menu-item index="2-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>技工星级</el-menu-item>
+									<el-menu-item index="2-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>技工组车辆</el-menu-item>
+									<el-menu-item index="2-3" @click="showView('person.html')"><i class="el-icon-eleme"></i>技工组</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-							<el-submenu>
+							<el-submenu index="3">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-s-platform"></i>
 									<span>数据管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>发动机品牌</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>车型档案</el-menu-item>
+									<el-menu-item index="3-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>发动机品牌</el-menu-item>
+									<el-menu-item index="3-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>车型档案</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-							<el-submenu>
+							<el-submenu index="4">
 								<template slot="title">
 									<i class="el-icon-user"></i>
 									<span>用户管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>用户车辆</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>用户管理</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>用户列表</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i></el-menu-item>
+									<el-menu-item index="4-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>用户车辆</el-menu-item>
+									<el-menu-item index="4-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>用户管理</el-menu-item>
+									<el-menu-item index="4-3" @click="showView('person.html')"><i class="el-icon-eleme"></i>用户列表</el-menu-item>
+									<el-menu-item index="4-4" @click="showView('person.html')"><i class="el-icon-eleme"></i></el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-								<el-submenu>
+							<el-submenu index="5">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-setting"></i>
 									<span>系统管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>系统日志</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>角色附加</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>权限附加</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>基础数据</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>数据统计</el-menu-item>
+									<el-menu-item index="5-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>系统日志</el-menu-item>
+									<el-menu-item index="5-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>角色附加</el-menu-item>
+									<el-menu-item index="5-3" @click="showView('person.html')"><i class="el-icon-eleme"></i>权限附加</el-menu-item>
+									<el-menu-item index="5-4" @click="showView('person.html')"><i class="el-icon-eleme"></i>基础数据</el-menu-item>
+									<el-menu-item index="5-5" @click="showView('person.html')"><i class="el-icon-eleme"></i>数据统计</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-								<el-submenu>
+							<el-submenu index="6">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-truck"></i>
 									<span>维修管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>竣工检验</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>完工结算</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('Caculation.html')"><i class="el-icon-message"></i>维修开单</el-menu-item></el-menu-item-group>
+									<el-menu-item index="6-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>竣工检验</el-menu-item>
+									<el-menu-item index="6-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>完工结算</el-menu-item>
+									<el-menu-item index="6-3" @click="showView('Caculation.html')"><i class="el-icon-eleme"></i>维修开单</el-menu-item>
+								</el-menu-item-group>
 							</el-submenu>
-								<el-submenu>
+							<el-submenu index="7">
 								<template slot="title">
-									<i class="el-icon-user"></i>
+									<i class="el-icon-user-solid"></i>
 									<span>职工管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="1-2" @click="showView('add.html')"><i class="el-icon-message"></i>职工列表</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>离职登记</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>通讯目录</el-menu-item>
-									<el-menu-item index="1-1" @click="showView('person.html')"><i class="el-icon-message"></i>岗位定义</el-menu-item>
+									<el-menu-item index="7-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>职工列表</el-menu-item>
+									<el-menu-item index="7-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>离职登记</el-menu-item>
+									<el-menu-item index="7-3" @click="showView('person.html')"><i class="el-icon-eleme"></i>通讯目录</el-menu-item>
+									<el-menu-item index="7-4" @click="showView('person.html')"><i class="el-icon-eleme"></i>岗位定义</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
-							
-							 <el-button type="danger" plain>退出系统</el-button>
 						</el-menu>
 					</el-aside>
 					<el-main>
@@ -112,12 +122,12 @@
 						<div id="cnt"></div>
 					</el-main>
 				</el-container>
-				<el-footer style='height:10%;'>底部Log</el-footer>
+				<el-footer style='height:10%;'> </el-footer>
 			</el-container>
 
 		</div>
 	</body>
-	<script type="text/javascript" src="js/jquery-1.12.4.js" ></script>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="js/vue.js"></script>
 	<script type="text/javascript" src="js/axios.min.js"></script>
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
