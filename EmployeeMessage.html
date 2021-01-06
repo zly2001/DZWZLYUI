@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+			<div id="app">
+				<h1>员工资料资料</h1>
+		<template>
+			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			    <el-button type="primary" plain>新增员工资料资料</el-button>
+			<el-table :data="tableData" stripe style="width: 100%">
+				
+				<el-table-column prop="date" label="#" >
+				</el-table-column>
+				<el-table-column prop="date" label="员工编号" >
+				</el-table-column>
+				<el-table-column prop="name" label="员工姓名" >
+				</el-table-column>
+				<el-table-column prop="address" label="性别">
+				</el-table-column>
+				<el-table-column prop="address" label="门店">
+				</el-table-column>
+				<el-table-column prop="address" label="部门">
+				</el-table-column>
+				<el-table-column prop="address" label="组">
+				</el-table-column>
+				<el-table-column prop="address" label="职位">
+				</el-table-column>
+				<el-table-column prop="address" label="角色">
+				</el-table-column>
+				<el-table-column prop="address" label="登陆账号">
+				</el-table-column>
+				<el-table-column prop="address" label="登陆密码">
+				</el-table-column>
+				<el-table-column prop="address" label="身份证">
+				</el-table-column>
+				<el-table-column prop="address" label="入职日期">
+				</el-table-column>
+				<el-table-column prop="address" label="住址">
+				</el-table-column>
+				<el-table-column prop="address" label="手机号">
+				</el-table-column>
+				<el-table-column prop="address" label="邮箱">
+				</el-table-column>
+				
+			</el-table>
+			 <el-button type="primary">取消</el-button>
+			  <el-button type="primary">确定</el-button>
+		</template>
+	</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					radio: '1'
+				};
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>

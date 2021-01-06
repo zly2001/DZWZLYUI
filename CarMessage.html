@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+			<div id="app">
+				<h1>发动机资料</h1>
+		<template>
+			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			    <el-button type="primary" plain>新增汽车发动机资料</el-button>
+			<el-table :data="tableData" stripe style="width: 100%">
+				
+				<el-table-column prop="date" label="#" width="180">
+				</el-table-column>
+				<el-table-column prop="date" label="发动机品牌编号" width="180">
+				</el-table-column>
+				<el-table-column prop="name" label="发动机品牌名称" width="180">
+				</el-table-column>
+				<el-table-column prop="address" label="修改">
+					<el-button type="primary" icon="el-icon-edit" circle></el-button>
+				</el-table-column>
+				<el-table-column prop="address" label="删除">
+					  <el-button type="danger" icon="el-icon-delete" circle></el-button>
+				</el-table-column>
+			</el-table>
+		</template>
+	</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					radio: '1'
+				};
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>

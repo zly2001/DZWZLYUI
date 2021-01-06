@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<h3>员工添加</h3>
+		<div id="app">
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*员工编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*员工姓名</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*性别</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*门店</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*部门</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*组</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*职位</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*角色</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*登陆账号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*登陆密码</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*身份证</template>
+				</el-input>
+			</div>
+			<div class="block">
+			<span class="demonstration">默认</span>
+			<el-date-picker v-model="value1" type="date" placeholder="选择日期">
+			</el-date-picker>
+		</div>
+		<div>
+			<el-input placeholder="请输入内容" v-model="input1">
+				<template slot="prepend">*住址</template>
+			</el-input>
+		</div>
+		<div>
+			<el-input placeholder="请输入内容" v-model="input1">
+				<template slot="prepend">*手机号</template>
+			</el-input>
+		</div>
+		<div>
+			<el-input placeholder="请输入内容" v-model="input1">
+				<template slot="prepend">*邮箱</template>
+			</el-input>
+		</div>
+
+		<el-button type="primary">取消</el-button>
+		<el-button type="primary">确定</el-button>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					radio: '1'
+				};
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>

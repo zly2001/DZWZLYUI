@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<h3>用户修改</h3>
+		<div id="app">
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*客户编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*客户编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*客户名称</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*手机号码</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*用户地址</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*接待人员</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*用户级别</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*注册地址</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入内容" v-model="input1">
+					<template slot="prepend">*用户备注</template>
+				</el-input>
+			</div>
+
+			<el-button type="primary">取消</el-button>
+			<el-button type="primary">确定</el-button>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					radio: '1'
+				};
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>
