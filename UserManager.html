@@ -29,24 +29,56 @@
 				
 				<el-table-column prop="date" label="#" width="180">
 				</el-table-column>
-				<el-table-column prop="date" label="客户编号" width="180">
+				<el-table-column prop="UserId" label="客户编号" width="180">
 				</el-table-column>
-				<el-table-column prop="name" label="手机号码" width="180">
+				<el-table-column prop="PhoneNumber" label="手机号码" width="180">
 				</el-table-column>
-				<el-table-column prop="address" label="接待人员">
+				<el-table-column prop="ConnectionPerson" label="接待人员">
 				</el-table-column>
-				<el-table-column prop="address" label="客户名称">
+				<el-table-column prop="UserName" label="客户名称">
 				</el-table-column>
-				<el-table-column prop="address" label="用户地址">
+				<el-table-column prop="Useraddress" label="用户地址">
 				</el-table-column>
-				<el-table-column prop="address" label="用户级别">
+				<el-table-column prop="UserLevel" label="用户级别">
 				</el-table-column>
-				<el-table-column prop="address" label="注册地址">
+				<el-table-column prop="registAddress" label="注册地址">
 				</el-table-column>
-				<el-table-column prop="address" label="用户备注">
+				<el-table-column prop="UserRemark" label="用户备注">
 				</el-table-column>
 				
 			</el-table>
+			<table class="table" style="margin-top: 15px;text-align: center;">
+				<thead>
+					<tr>
+						<td class="UserId">客户编号</td>
+						<td class="PhoneNumber">手机号码</td>
+						<td class="ConnectionPerson">接待人员</td>
+						<td class="UserName">客户名称</td>
+						<td class="Useraddress">用户地址</td>
+						<td class="UserLevel">用户级别</td>
+						<td class="registAddress">注册地址</td>
+						<td class="UserRemark">用户备注</td>
+					</tr>
+
+				</thead>
+				<tbody class="table table-striped">
+					<tr v-for="(temp,i) in pageInfo.list">
+						<td v-text="temp.clientno"></td>
+						<td v-text="temp.cliphone"></td>
+						<td v-text="temp.employeeid"></td>
+						<td v-text="temp.cliname"></td>
+						<td v-text="temp.cliaddress"></td>
+						<td v-text="temp.mid"></td>
+						<td v-text="temp.sfz"></td>
+						<td v-text="temp.khbz"></td>
+						<td>
+							<!--<button @click="mm('xg',temp)" class="glyphicon glyphicon-pencil btn btn-success" data-toggle="modal" data-target="#mydialog"></button>
+							<button @click="deleteByPrimaryKey(temp.gid)" class="glyphicon glyphicon-trash btn btn-danger"></button>-->
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
 			 <el-button type="primary">取消</el-button>
 			  <el-button type="primary">确定</el-button>
 		</template>
@@ -62,7 +94,34 @@
 			el: "#app",
 			data: {
 				dialogVisible: false,
+				UserId:"",
+				PhoneNumber:"",
+				ConnectionPerson:"",
+				UserName:"",
+				UserAddress:"",
+				UserLevel:"",
+				registAddress:"",
+				UserRemark:"",
+				Client:{},
+				pageInfo:{}
+				
 			},
+			mounted(){
+				let _this=this;
+				axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryAll`,{
+					UserId:_this.clientno,
+					PhoneNumber:_this.cliphone,
+					ConnectionPerson:_this.employeeid,
+					UserName:_this.cliname,
+					UserAddress:_this.cliaddress,
+					UserLevel:_this.mid,
+					registAddress:_this.sfz,
+					UserRemark:_this.khbz,
+				}).then(function(resp){
+					_this.pageInfo=resp.data;
+				});
+			},
+			//方法
 				methods: {
 				handleClose(done) {
 					this.$confirm('确认关闭？')
@@ -75,8 +134,7 @@
 					$("#cnt").load("addUserMessage.html");
 				}
 			},
-			mounted() {
-			}
+			
 		})
 	</script>
 
