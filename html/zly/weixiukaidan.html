@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>维修开单</title>
+		<style>
+			.text {
+				font-size: 14px;
+			}
+			
+			.clearfix:before,
+			.clearfix:after {
+				display: table;
+				content: "";
+			}
+			
+			.clearfix:after {
+				clear: both
+			}
+			
+			.box-card {
+				width: 100%;
+			}
+			
+			.el-table-column {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="weixiukaidan">
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<el-col :span="4">
+						维修开单
+						<el-button @click="showView('html/zly/zlyZNWX.html')" type="primary">站内维修</el-button>
+					</el-col>					
+					<el-col :span="5" :offset="12">
+						<el-input v-model="message" placeholder="请输入车牌号"></el-input>
+					</el-col>
+					<el-col :span="2" style="margin-left: 10px;">
+						<el-button type="primary">搜索</el-button>
+					</el-col>
+				</div>
+				<el-row>
+					<template>
+						<el-table :data="tableData" stripe style="width: 100%">
+							<el-table-column prop="message" label="日期" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName" @tab-click="handleClick">
+							<el-tab-pane label="正在维修" name="first"></el-tab-pane>
+							<el-tab-pane label="维修历史" name="second"></el-tab-pane>
+							<el-tab-pane label="角色管理" name="third"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row v-show="isShow1">
+					<template>
+						<el-table :data="messages" stripe style="width: 100%; height=250;">
+							<el-table-column prop="message" label="日期" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+				<el-row v-show="isShow2">
+					<template>
+						<el-table :data="messages" stripe style="width: 100%; height=250;">
+							<el-table-column prop="message" label="日期1" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名1" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址1">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+			</el-card>
+		</div>
+	</body>
+	<script>
+		var weixiukaidan = new Vue({
+			el: "#weixiukaidan",
+			data: {
+				message: "",
+				isShow1: false,
+				isShow2: true,
+				activeName: "second",
+				messages: []
+			},
+			methods: {
+				handleClick() {
+						if (this.activeName == "first") {
+							this.isShow1 = true;
+							this.isShow2 = false;
+						}
+						if (this.activeName == "second") {
+							this.isShow1 = false;
+							this.isShow2 = true;
+						}
+					},
+					showView(url) {
+						indexApp.showView(url);
+					}
+			}
+		});
+	</script>
+
+</html>
