@@ -24,11 +24,18 @@
  				 </span>
 				</el-dialog>
 
-				<el-table :data="clientlist" stripe style="width: 100%">
-
-					<td></td>
-					<el-table-column prop="date" label="#" width="180">
-
+				<el-table :data="clientlist" stripe style="width: 100%" >
+					<!--<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" @opened="updateUserMessage" :destroy-on-close="true" :fullscreen="false">
+						<div id="cnt1">
+							<span>正在修改用户信息</span>
+						</div>
+						<span slot="footer" class="dialog-footer">
+							<el-button @click="dialogVisible = false">取 消</el-button>
+				    	<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+ 				 		</span>
+						</el-dialog>
+					<td></td>-->
+					<el-table-column prop="clientno" label="#" width="180">
 					</el-table-column>
 					<el-table-column prop="clientno" label="客户编号" width="180">
 					</el-table-column>
@@ -36,7 +43,6 @@
 					</el-table-column>
 					<el-table-column prop="employeeid" label="接待人员">
 					</el-table-column>
-					
 					<el-table-column prop="cliname" label="客户名称">
 					</el-table-column>
 					<el-table-column prop="cliaddress" label="用户地址">
@@ -45,12 +51,15 @@
 					</el-table-column>
 					<el-table-column prop="sfz" label="注册地址">
 					</el-table-column>
-					`
 					<el-table-column prop="khbz" label="用户备注">
 					</el-table-column>
-
+					<el-table-column fixed="right" label="操作" width="100">
+						<template slot-scope="scope">
+							<el-button @click="deleteUser(scope.row.clientno)" type="text" size="small">删除</el-button>
+							<el-button @click="updateUserMessage()" type="text" size="small">编辑</el-button>
+						</template>
+					</el-table-column>
 				</el-table>
-
 				</table>
 				<el-button type="primary">取消</el-button>
 				<el-button type="primary">确定</el-button>
@@ -88,8 +97,54 @@
 				},
 				handelOpen() {
 					$("#cnt").load("addUserMessage.html");
+				},
+				updateUserMessage() {
+					this.$alert('您正在执行修改操作', '修改用户个人信息', {
+						confirmButtonText: '确定',
+						callback: action => {
+							this.$message({
+								type: 'info',
+								message: `action: ${ action }`
+							});
+						}
+					});
+
+				},
+				deleteUser(clientno) {
+					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+					let _this = this;
+						axios.delete(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/delete/`+clientno).then(resp => {
+						console.log(resp);
+						if(resp.data.code == 200) {
+							this.$message({
+								message: "删除用户成功",
+								type: 'success'
+							});
+						}
+
+					})
+
+					/*	let RowDate=this;
+						this.RowDate=val;
+						console.log(val)
+						*/
+
 				}
-			},
+			}
 
 		})
 	</script>

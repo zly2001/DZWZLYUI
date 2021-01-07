@@ -6,13 +6,12 @@
 		<title></title>
 		<link rel="stylesheet" type="text/css" href="css/index.css" />
 	</head>
-
 	<body>
 		<h3>用户新增</h3>
 		<div id="app1">
 			<el-form :model="AddUser" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<div>
-					<el-input placeholder="请输入客户编号" v-model="AddUser.clientno">
+					<el-input placeholder="请输入客户编号" v-model="AddUser.clino">
 						<template slot="prepend">*客户编号</template>
 					</el-input>
 				</div>
@@ -50,13 +49,14 @@
 					<el-input placeholder="请输入用户备注" v-model="AddUser.khbz">
 						<template>*用户备注</template>
 					</el-input>
+
 				</div>
-				
 
 				<el-button type="primary" @click="cancel()">取消</el-button>
 				<el-button type="primary" @click="ensure()">确定</el-button>
 			</el-form>
 		</div>
+
 	</body>
 
 	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
@@ -65,102 +65,10 @@
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script>
-		var app1 = new Vue({
-			el: "#app1",
-			data: {
-				input1: "",
-				AddUser: {
-					clientno: "",
-					cliname: "",
-					cliphone: "",
-					cliaddress: "",
-					employeeid: "",
-					mid: "",
-					sfz: "",
-					khbz: ""
-				},
-				rules: {
-					clientno: [{
-							required: true,
-							message: '请输入客户编号',
-							trigger: 'blur'
-						},
-						{
-							min: 3,
-							max: 5,
-							message: '长度在 3 到 5 个字符',
-							trigger: 'blur'
-						}
-					],
-					cliname: [{
-						required: true,
-						message: '请选择客户名称',
-						trigger: 'change'
-					}],
-					cliphone: [{
-						type: 'String',
-						required: true,
-						message: '请选择客户电话号码',
-						trigger: 'change'
-					}],
-					cliaddress: [{
-						type: 'String',
-						required: true,
-						message: '请选择客户地址',
-						trigger: 'change'
-					}],
-					employeeid: [{
-						type: 'array',
-						required: true,
-						message: '请至少选择一个接待人员',
-						trigger: 'change'
-					}],
-					mid: [{
-						required: true,
-						message: '请填写客户等级',
-						trigger: 'change'
-					}],
-					sfz: [{
-						required: true,
-						message: '请填写客户信息',
-						trigger: 'blur'
-					}],
-					khbz: [{
-						required: true,
-						message: '请填写客户备注',
-						trigger: 'blur'
-					}]
-				}
+		var app2=new Vue({
+			el:"#app",
 			
-		},
-		methods: {
-			cancel() {
-				this.$alert('您正在执行返回操作', '执行返回', {
-					confirmButtonText: '确定',
-					callback: action => {
-						this.$message({
-							type: 'info',
-							message: `action: ${ action }`
-						});
-					}
-				});
-			},
-			ensure() {
-					let _this = this;
-					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/insert`, this.AddUser).then(resp => {
-						if(resp.data == true) {
-							this.$message({
-								message: "新增用户成功",
-								type: 'success'
-							});
-						}
-					})
-				}
-
-			}
-		
-
 		});
-	</script>
-
-</html>
+		
+	</script>	
+		< /html>
