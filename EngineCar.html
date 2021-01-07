@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+	</head>
+
+	<body>
+		<script src="//unpkg.com/vue/dist/vue.js"></script>
+		<script src="//unpkg.com/element-ui@2.14.1/lib/index.js"></script>
+		<div id="app">
+			<el-input v-model="input" placeholder="请输入内容" ></el-input>
+			<el-input v-model="input" placeholder="请输入内容"></el-input>
+			<el-input v-model="input" placeholder="请输入内容"></el-input>
+			<el-input v-model="input" placeholder="请输入内容"></el-input>
+			<el-button type="primary" icon="el-icon-edit">修改</el-button>
+			<el-button type="primary" icon="el-icon-share">增加</el-button>
+			<el-button type="primary" icon="el-icon-delete">删除</el-button>
+			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			<template>
+				<el-table :data="tableData" stripe style="width: 100%">
+					<el-table-column prop="No" label="序号" width="180">
+					</el-table-column>
+					<el-table-column prop="CarNumber" label="车牌号" width="180">
+					</el-table-column>
+					<el-table-column prop="CarBrand" label="品牌">
+					</el-table-column>
+					<el-table-column prop="CarCondition" label="车型">
+					</el-table-column>
+					<el-table-column prop="distance" label="当前历程">
+					</el-table-column>
+					<el-table-column prop="belongClass" label="归属班组">
+					</el-table-column>
+				</el-table>
+			</template>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = {
+			data() {
+				return {
+					tableData: [{
+						No: '2016-05-02',
+						CarNumber: '王小虎',
+						CarBrand: '上海市普陀区金沙江路 1518 弄',
+						CarCondition: '上海市普陀区金沙江路 1518 弄',
+						distance: '上海市普陀区金沙江路 1518 弄',
+						belongClass: '上海市普陀区金沙江路 1518 弄'
+					}, {
+						No: '2016-05-02',
+						CarNumber: '王小虎',
+						CarBrand: '上海市普陀区金沙江路 1518 弄',
+						CarCondition: '上海市普陀区金沙江路 1518 弄',
+						distance: '上海市普陀区金沙江路 1518 弄',
+						belongClass: '上海市普陀区金沙江路 1518 弄'
+					}, {
+						No: '2016-05-02',
+						CarNumber: '王小虎',
+						CarBrand: '上海市普陀区金沙江路 1518 弄',
+						CarCondition: '上海市普陀区金沙江路 1518 弄',
+						distance: '上海市普陀区金沙江路 1518 弄',
+						belongClass: '上海市普陀区金沙江路 1518 弄'
+					}, {
+						No: '2016-05-02',
+						CarNumber: '王小虎',
+						CarBrand: '上海市普陀区金沙江路 1518 弄',
+						CarCondition: '上海市普陀区金沙江路 1518 弄',
+						distance: '上海市普陀区金沙江路 1518 弄',
+						belongClass: '上海市普陀区金沙江路 1518 弄'
+					}]
+				}
+			}
+		}
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+	</head>
+
+	<body>
+		<script src="//unpkg.com/vue/dist/vue.js"></script>
+		<script src="//unpkg.com/element-ui@2.14.1/lib/index.js"></script>
+		<div id="app">
+			<el-row>
+				<el-button icon="el-icon-search" circle></el-button>
+				<el-button type="primary" icon="el-icon-edit" circle></el-button>
+				<el-button type="success" icon="el-icon-check" circle></el-button>
+				<el-button type="info" icon="el-icon-message" circle></el-button>
+				<el-button type="warning" icon="el-icon-star-off" circle></el-button>
+				<el-button type="danger" icon="el-icon-delete" circle></el-button>
+			</el-row>
+			<el-input placeholder="请输入内容"></el-input>
+			<template>
+
+				<el-table :data="tableData" height="250" border style="width: 100%">
+					<el-table-column prop="date" label="#" width="180">
+					</el-table-column>
+					<el-table-column prop="No" label="编号" width="180">
+					</el-table-column>
+					<el-table-column prop="Name" label="技工组名称">
+					</el-table-column>
+				</el-table>
+
+				<el-table :data="tableData" height="250" border style="width: 100%">
+					<el-table-column prop="date" label="#" width="180">
+					</el-table-column>
+					<el-table-column prop="No" label="编号" width="180">
+					</el-table-column>
+					<el-table-column prop="Name" label="班组">
+					</el-table-column>
+					<el-table-column prop="Name" label="星级">
+					</el-table-column>
+					<el-table-column prop="Name" label="账号">
+					</el-table-column>
+					<el-table-column prop="Name" label="号码">
+					</el-table-column>
+					<el-table-column prop="Name" label="工种">
+					</el-table-column>
+					<el-table-column prop="Name" label="维修品牌">
+					</el-table-column>
+					<el-table-column prop="Name" label="组内身份">
+					</el-table-column>
+				</el-table>
+			</template>
+
+		</div>
+
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var Main = new Vue({
+			data: {
+				tableData: [{
+					No: '123',
+					name: '李金宇',
+				}, {
+					No: '456',
+					name: '王小虎',
+				}, {
+					No: '789',
+					name: '王小虎',
+				}, {
+					date: '2016-05-01',
+					name: '王小虎',
+				}]
+			}
+
+		});
+
+		var Ctor = Vue.extend(Main)
+		new Ctor().$mount('#app')
+	</script>
+
+</html>
