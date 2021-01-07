@@ -9,7 +9,7 @@
 
 	<body>
 		<h3>用户修改</h3>
-		<div id="app">
+		<div id="app1">
 			<div>
 				<el-input placeholder="请输入客户编号" v-model="input1">
 					<template slot="prepend">*客户编号</template>
@@ -52,7 +52,7 @@
 			</div>
 			<div>
 				<el-input placeholder="请输入用户备注" v-model="input1">
-					<template slot="prepend">*用户备注</template>
+					<template>*用户备注</template>
 				</el-input>
 			</div>
 
@@ -66,22 +66,26 @@
 	<script type="text/javascript" src="js/axios.min.js"></script>
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
-	<script>var app = new Vue({
-			el: "#app",
+	<script>
+		var app1 = new Vue({
+			el: "#app1",
 			data: {
-
+				input1: ""
 			},
 			methods: {
 				cancel() {
 					this.$alert('这是一段内容', '标题名称', {
-							confirmButtonText: '确定',
-							callback: action => {
-								this.$message({
-									type: 'info',
-									message: `action: ${ action }`
-								});
-							}
+						confirmButtonText: '确定',
+						callback: action => {
+							this.$message({
+								type: 'info',
+								message: `action: ${ action }`
+							});
 						}
-					});</script>
+					});
+				}
+			}
+		});
+	</script>
 
 </html>
