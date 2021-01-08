@@ -33,6 +33,7 @@
 				</arguments>
 			</matcher>
 		</filter>
+		<filter>
 			<id>1609742107901</id>
 			<name></name>
 			<type>26</type>
@@ -41,6 +42,7 @@
 				<arguments>1.0-name-matches-false-false-node_modules</arguments>
 			</matcher>
 		</filter>
+		<filter>
 			<id>1609742107902</id>
 			<name></name>
 			<type>26</type>
