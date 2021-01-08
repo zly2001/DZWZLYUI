@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>站内维修</title>
+		<style>
+			.text {
+				font-size: 14px;
+			}
+			
+			.clearfix:before,
+			.clearfix:after {
+				display: table;
+				content: "";
+			}
+			
+			.clearfix:after {
+				clear: both
+			}
+			
+			.box-card {
+				width: 100%;
+			}
+			
+			.el-table-column {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="zlyZNWX">
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<el-col :span="3">
+						维修接车
+					</el-col>
+					<el-col :span="5" :offset="16">
+						<template>
+							<el-radio-group @change="showZWWXinput" v-model="Inststion.iszn" size="small">
+								<el-radio-button label="1">站内接车</el-radio-button>
+								<el-radio-button label="2">站外接车</el-radio-button>
+							</el-radio-group>
+						</template>
+					</el-col>
+				</div>
+				<el-row>
+					<el-col :span="10" style="margin-left: 10px;">
+						<el-form ref="form" :model="Inststion" label-width="80px" size="mini">
+							<el-row>
+								<el-col :span="12">
+									<el-form-item label="维修编号">
+										<el-input :disabled="true" v-model="Inststion.inid"></el-input>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="车牌号">
+										<el-input v-model="Inststion.cno"></el-input>
+									</el-form-item>
+								</el-col>
+							</el-row>
+							<el-row>
+								<el-col :span="12">
+									<el-form-item label="技班">
+										<el-select v-model="Inststion.tid" placeholder="请选择技班">
+											<el-option v-for="(team,i) in Team" :key="team.tid" :label="team.tname" :value="team.tid">
+											</el-option>
+										</el-select>
+									</el-form-item>
+								</el-col>
+							</el-row>
+							<el-row>
+								<el-col :span="12">
+									<el-form-item label="驾驶人">
+										<el-input v-model="Inststion.zrr" placeholder="请输入驾驶人"></el-input>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="质检员">
+										<el-select v-model="Inststion.zjy" placeholder="请选择质检员">
+											<el-option label="张来遇" value="1"></el-option>
+											<el-option label="李金宇" value="2"></el-option>
+										</el-select>
+								</el-col>
+							</el-row>
+							<el-form-item label="预计完工">
+								<el-date-picker v-model="Inststion.yjday" type="date" placeholder="选择日期">
+								</el-date-picker>
+							</el-form-item>
+							<el-row v-show="isShow1">
+								<el-col :span="12">
+									<el-form-item label="救援车辆">
+										<el-select v-model="Inststion.workcarjlid" placeholder="请选择救援车辆">
+											<el-option label="张来遇" value="1"></el-option>
+											<el-option label="李金宇" value="2"></el-option>
+										</el-select>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="里程数">
+										<el-input v-model="Inststion.lc" placeholder="/公里"></el-input>
+								</el-col>
+							</el-row>
+							<el-form-item label="备注">
+								<el-input type="textarea" v-model="Inststion.insevent" placeholder="请输入备注"></el-input>
+							</el-form-item>
+							<el-form-item size="large">
+								<el-button type="success" @click="dialogVisible = true">添加维修项</el-button>
+								<el-button type="primary" @click="getProjectNum">立即创建</el-button>
+								<el-button>取消</el-button>
+							</el-form-item>
+						</el-form>
+					</el-col>
+					<el-col v-show="isShow1" :span="12">
+						地图{{isShow1}}
+					</el-col>
+				</el-row>
+				<el-row>
+					<el-dialog title="添加维修项" @open="selectAllByItemstype" :visible.sync="dialogVisible" width="60%" :before-close="handleClose">
+						<div>
+							<el-form ref="form" label-width="80px" size="mini">
+								<el-form-item label="项目类型">
+									<el-select v-model="Items" placeholder="请选择项目类型">
+										<el-option v-for="(itemstype,i) in Itemstype" :key="itemstype.itemstypeid" :label="itemstype.itemstypename" :value="itemstype.items">
+										</el-option>
+									</el-select>
+								</el-form-item>
+							</el-form>
+							<template>
+								<el-table :data="Items" @selection-change="handleSelectionChange" stripe style="width: 100%; height=250;">
+									<el-table-column type="index" label="序号" width="50">
+									</el-table-column>
+									<el-table-column prop="itemsname" label="维修项目">
+									</el-table-column>
+									<el-table-column prop="itemsprice" label="价格">
+									</el-table-column>
+									<el-table-column prop="itemstime" label="维修时间">
+									</el-table-column>
+									<el-table-column prop="itemsxh" label="项目介绍">
+									</el-table-column>
+									<el-table-column type="selection">
+									</el-table-column>
+								</el-table>
+							</template>
+						</div>
+						<span slot="footer" class="dialog-footer">
+   							 <el-button @click="dialogVisible = false">取 消</el-button>
+   							 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  						</span>
+					</el-dialog>
+				</el-row>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName">
+							<el-tab-pane label="维修项目" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Wxxqs" stripe style="width: 100%; height=250;">
+							<el-table-column type="index" label="序号">
+							</el-table-column>
+							<el-table-column prop="xqname" label="维修项目">
+							</el-table-column>
+							<el-table-column label="数量">
+								<template slot-scope="scope">
+									<el-input-number v-model="scope.row.xqsl" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+								</template>
+							</el-table-column>
+							<el-table-column prop="column1" label="价格">
+							</el-table-column>
+							<el-table-column label="操作">
+								<template slot-scope="scope">
+									<el-button type="danger" icon="el-icon-delete" @click.native.prevent="deleteWxxqs(scope.$index, Wxxqs)" circle></el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+			</el-card>
+		</div>
+	</body>
+	<script>
+		var zlyZNWX = new Vue({
+			el: "#zlyZNWX",
+			data: {
+				//维修开单
+				Inststion: {
+					inid: "",
+					statusid: "",
+					casid: "",
+					tid: "",
+					workcarjlid: "",
+					cno: "",
+					izt: "",
+					jdate: "",
+					jcday: "",
+					yjday: "",
+					wgday: "",
+					iszn: "1",
+					lc: "",
+					ifjs: "",
+					insevent: "",
+					zjy: "",
+					zrr: "",
+					zhgs: "",
+					jyjg: "",
+					itemsid: ""
+				},
+				loading: true,
+				dialogVisible: false,
+				isShow1: false,
+				activeName: "first",
+				//班组
+				Team: [],
+				//维修项目类型
+				Itemstype: [],
+				//维修项目
+				Items: [],
+				//维修详情
+				Wxxqs: [],
+				messages: []
+			},
+			mounted() {
+				//查询所有班组
+				let _this = this;
+				axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction/selectAll`).then(function(resp) {
+					_this.Team = resp.data;
+				});
+			},
+			methods: {
+				// 获取当前日期的方法
+				getProjectNum() {
+						const projectTime = new Date() // 当前中国标准时间
+						const Year = projectTime.getFullYear() // 获取当前年份 支持IE和火狐浏览器.
+						const Month = projectTime.getMonth() + 1 // 获取中国区月份
+						const Day = projectTime.getDate() // 获取几号
+						var CurrentDate = Year
+						if (Month >= 10) { // 判断月份和几号是否大于10或者小于10
+							CurrentDate += Month
+						} else {
+							CurrentDate += '0' + Month
+						}
+						if (Day >= 10) {
+							CurrentDate += Day
+						} else {
+							CurrentDate += '0' + Day
+						}
+						// 调用获取当前日期的方法加四位随机数  赋值表单中的项目编号 如果是6位或者8位随机数，相应的 *1000000或者 *100000000就行了						
+						this.Inststion.inid = Math.floor(CurrentDate + Math.random() * 10000);
+						if (this.Wxxqs[0] != null) {
+							this.Wxxqs[0].inid = this.Inststion.inid;
+							this.insertInststion();
+						}
+					},
+					//查询所有维修项目类型
+					selectAllByItemstype() {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/lp/api/ItemstypeAction/selectAll`).then(function(resp) {
+							_this.Itemstype = resp.data;
+						});
+					},
+					//新增维修单
+					insertInststion() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion).then(function(resp) {
+							if (resp.data.code == "200") {
+								if (_this.Wxxqs[0] != null) {
+									_this.insertWxxq();
+								}
+								_this.$message({
+									showClose: true,
+									message: '新增维修单成功!',
+									type: 'success'
+								});
+							} else {
+								_this.$message({
+									showClose: true,
+									message: '新增维修单失败!',
+									type: 'error'
+								});
+							}
+						});
+					},
+					//新增维修详情
+					insertWxxq() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxqs).then(function(resp) {
+							if (resp.data.code == "200") {
+								_this.$message({
+									showClose: true,
+									message: '新增成功!',
+									type: 'success'
+								});
+							} else {
+								_this.$message({
+									showClose: true,
+									message: '新增失败!',
+									type: 'error'
+								});
+							}
+						});
+					},
+					//关闭模态框
+					handleClose(done) {
+						this.$confirm('确认关闭？')
+							.then(_ => {
+								done();
+							})
+							.catch(_ => {});
+					},
+					//站外维修信息的显示隐藏
+					showZWWXinput() {
+						if (this.Inststion.iszn == 1) {
+							this.isShow1 = false;
+							this.lc = "";
+							this.workcarjlid = "";
+						} else {
+							this.isShow1 = true;
+						}
+					},
+					//复选框勾选事件
+					handleSelectionChange(val) {
+						var Wxxqs = [];
+						val.forEach((item, i) => {
+							//维修详情对象
+							var Wxxq = {};
+							Wxxq["inid"] = "";
+							Wxxq["spid"] = item.itemsid;
+							Wxxq["xqname"] = item.itemsname;
+							Wxxq["xqsl"] = this.Wxxqs[i] == null ? 1 : this.Wxxqs[i].xqsl;
+							Wxxq["xmoney"] = item.itemsprice;
+							Wxxq["column1"] = this.Wxxqs[i] == null ? item.itemsprice : this.Wxxqs[i].column1;
+							Wxxqs[i] = Wxxq;
+						});
+						this.Wxxqs = Wxxqs;
+					},
+					//维修详情删除事件
+					deleteWxxqs(index, rows) {
+						rows.splice(index, 1);
+					},
+					//数量改变事件
+					handleChange(value) {}
+			}
+		});
+	</script>
+
+</html>

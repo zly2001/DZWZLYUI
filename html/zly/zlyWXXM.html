@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>添加维修项</title>
+	</head>
+
+	<body>
+		<div id="zlyWXXM">
+			<el-form ref="form" :model="sizeForm" label-width="80px" size="mini">
+				<el-form-item label="车牌号">
+					<el-input v-model="sizeForm.name"></el-input>
+				</el-form-item>
+				<el-form-item label="技班">
+					<el-select v-model="sizeForm.region" placeholder="请选择驾驶人">
+						<el-option label="区域一" value="shanghai"></el-option>
+						<el-option label="区域二" value="beijing"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="驾驶人">
+							<el-input v-model="sizeForm.name" placeholder="请输入驾驶人"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="质检员">
+							<el-select v-model="sizeForm.region" placeholder="请选择质检员">
+								<el-option label="区域一" value="shanghai"></el-option>
+								<el-option label="区域二" value="beijing"></el-option>
+							</el-select>
+					</el-col>
+				</el-row>
+				<el-form-item label="预计完工">
+					<el-date-picker v-model="value1" type="date" placeholder="选择日期">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item label="备注">
+					<el-input type="textarea" v-model="sizeForm.name" placeholder="请输入备注"></el-input>
+				</el-form-item>
+				<el-form-item size="large">
+					<el-button type="success" @click="dialogVisible = true">添加维修项</el-button>
+					<el-button type="primary" @click="">立即创建</el-button>
+					<el-button>取消</el-button>
+				</el-form-item>
+			</el-form>
+		</div>
+	</body>
+	<script>
+		var zlyWXXM = new Vue({
+			el: "#zlyWXXM",
+			data: {
+				sizeForm: {
+					name: '',
+					region: '',
+					date1: '',
+					date2: '',
+					delivery: false,
+					type: [],
+					resource: '',
+					desc: ''
+				}
+			},
+			methods: {}
+		});
+	</script>
+
+</html>

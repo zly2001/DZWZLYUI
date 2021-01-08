@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>登录</title>
+		<link rel="stylesheet" href="css/index.css" />
+		<style>
+			.el-header,
+			.el-footer {
+				background-color: #B3C0D1;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			}
+			
+			.el-main {
+				background-color: #E9EEF3;
+				color: #333;
+				text-align: center;
+				line-height: 160px;
+			}
+			
+			body > .el-container {
+				margin-bottom: 40px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<el-container id="login">
+			<el-header style='height:10%;'>张来遇汽修管理系统</el-header>
+			<el-main>
+				<el-form :model="Employee" ref="personForm">
+					<el-row>
+						<el-col :xs="24" :sm="20" :md="12" :offset="10">
+							<el-form-item label="工号" prop="employeeid">
+								<el-col :span="6">
+									<!--非常重要-->
+									<el-input v-model.number="Employee.employeeid" placeholder="请输入工号"></el-input>
+								</el-col>
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-row>
+						<el-col :xs="24" :sm="20" :md="12" :offset="10">
+							<el-form-item label="密码" prop="epwd">
+								<el-col :span="6">
+									<el-input v-model="Employee.epwd" placeholder="请输入密码"></el-input>
+								</el-col>
+							</el-form-item>
+						</el-col>
+					</el-row>
+					<el-form-item>
+						<el-button type="primary" @click="selectByLogin">登录</el-button>
+					</el-form-item>
+				</el-form>
+			</el-main>
+			<el-footer style='height:10%;'></el-footer>
+		</el-container>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var login = new Vue({
+			el: '#login',
+			data: {
+				Employee: {
+					employeeid: '',
+					epwd: ''
+				}
+			},
+			methods: {
+				selectByLogin() {
+					let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction`, this.Employee).then(function(resp) {
+						if (resp.data.code == "200") {
+							document.location = "index.html";
+						} else {
+							_this.$message.error('登录失败!');
+						}
+					});
+				}
+			}
+		})
+	</script>
+
+</html>
