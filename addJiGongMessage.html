@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<link rel="stylesheet" type="text/css" href="css/index.css" />
+
+	<body>
+		<div id="ADDJG">
+			<el-form ref="form" :model="JiGong" label-width="80px">
+				<el-form-item label="活动名称">
+					<el-input v-model="JiGong.stars"></el-input>
+				</el-form-item>
+				<el-form-item label="活动名称">
+					<el-input v-model="JiGong.xmoney"></el-input>
+				</el-form-item>
+			</el-form>
+			<template>
+				<el-table :data="JiGong" style="width: 100%">
+					<el-table-column prop="date" label="日期" width="180">
+					</el-table-column>
+					<el-table-column prop="name" label="姓名" width="180">
+					</el-table-column>
+					<el-table-column prop="address" label="地址">
+					</el-table-column>
+				</el-table>
+			</template>
+
+		</div>
+	</body>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var ADDJG = new Vue({
+			data: {
+				el: "#ADDJG",				
+				JiGong: {
+					stars: "",
+					xmoney: "",
+					type: "1"
+				}
+			},
+			methods: {
+				add() {}
+			}
+		});
+	</script>
+
+</html>
