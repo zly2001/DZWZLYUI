@@ -5,6 +5,17 @@
 		<meta charset="UTF-8">
 		<title>用户管理</title>
 		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<style type="text/css">
+			element.style {
+				z-index: 2 !important;
+			}
+			
+			.v-modal {
+				background: white !important;
+				height: 0;
+				width: 0;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -24,17 +35,7 @@
  				 </span>
 				</el-dialog>
 
-				<el-table :data="clientlist" stripe style="width: 100%" >
-					<!--<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" @opened="updateUserMessage" :destroy-on-close="true" :fullscreen="false">
-						<div id="cnt1">
-							<span>正在修改用户信息</span>
-						</div>
-						<span slot="footer" class="dialog-footer">
-							<el-button @click="dialogVisible = false">取 消</el-button>
-				    	<el-button type="primary" @click="dialogVisible = false">确 定</el-button>
- 				 		</span>
-						</el-dialog>
-					<td></td>-->
+				<el-table :data="clientlist" stripe style="width: 100%">
 					<el-table-column prop="clientno" label="#" width="180">
 					</el-table-column>
 					<el-table-column prop="clientno" label="客户编号" width="180">
@@ -56,8 +57,68 @@
 					<el-table-column fixed="right" label="操作" width="100">
 						<template slot-scope="scope">
 							<el-button @click="deleteUser(scope.row.clientno)" type="text" size="small">删除</el-button>
-							<el-button @click="updateUserMessage()" type="text" size="small">编辑</el-button>
+							<el-button type="text" @click="updateUserMessage(scope.row.clientno, scope.row)" size="small">修改</el-button>
+							<el-dialog title="修改用户信息" :visible="editUserForm" size="tiny" :modal-append-to-body='false' @close='closeDialog'>
+								<div id="app1">
+
+									<el-form :model="UserMessage" :rules="rules" ref="UserMessage" label-width="100px" class="demo-ruleForm">
+										<div>
+											<el-input placeholder="请输入客户编号" v-model="	UserMessage.clientno">
+												<template slot="prepend">*客户编号</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入客户名称" v-model="UserMessage.cliname">
+												<template slot="prepend">*客户名称</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入手机号码" v-model="UserMessage.cliphone">
+												<template slot="prepend">*手机号码</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入用户地址" v-model="UserMessage.cliaddress">
+												<template slot="prepend">*用户地址</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入接待人员" v-model="UserMessage.employeeid">
+												<template slot="prepend">*接待人员</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入用户级别" v-model="UserMessage.mid">
+												<template slot="prepend">*用户级别</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入注册地址" v-model="UserMessage.sfz">
+												<template slot="prepend">*注册地址</template>
+											</el-input>
+										</div>
+										<div>
+											<el-input placeholder="请输入用户备注" v-model="clientlist.khbz">
+												<template>*用户备注</template>
+											</el-input>
+
+										</div>
+
+										<el-button type="primary" @click="editUserForm=false">取消</el-button>
+										<el-button type="primary" @click="updateMessage()">确定</el-button>
+									</el-form>
+								</div>
+								<div slot="footer" class="dialog-footer">
+									<el-button @click="dialogFormVisible = false">取 消</el-button>
+									<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+								</div>
+							</el-dialog>
+
+							</el-dialog>
+							<span slot="footer" class="dialog-footer">
+    						<!--<el-button @click="dialogVisible = false">取 消</el-button>-->
 						</template>
+							
 					</el-table-column>
 				</el-table>
 				</table>
@@ -75,19 +136,92 @@
 		var app = new Vue({
 			el: "#app",
 			data: {
+				editUserForm:false,
+				editsForm:false,
 				dialogVisible: false,
+				dialogVisible2:false,
 				Client: {},
-				clientlist: []
+				clientlist: [],
+				UserMessage:{
+					clientno: "",
+					cliname: "",
+					cliphone: "",
+					cliaddress: "",
+					employeeid: "",
+					mid: "",
+					sfz: "",
+					khbz: ""
+					
+				},
+					rules: {
+					clientno: [{
+							required: true,
+							message: '请输入客户编号',
+							trigger: 'blur'
+						},
+						{
+							min: 3,
+							max: 5,
+							message: '长度在 3 到 5 个字符',
+							trigger: 'blur'
+						}
+					],
+					cliname: [{
+						required: true,
+						message: '请选择客户名称',
+						trigger: 'change'
+					}],
+					cliphone: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户电话号码',
+						trigger: 'change'
+					}],
+					cliaddress: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户地址',
+						trigger: 'change'
+					}],
+					employeeid: [{
+						type: 'array',
+						required: true,
+						message: '请至少选择一个接待人员',
+						trigger: 'change'
+					}],
+					mid: [{
+						required: true,
+						message: '请填写客户等级',
+						trigger: 'change'
+					}],
+					sfz: [{
+						required: true,
+						message: '请填写客户信息',
+						trigger: 'blur'
+					}],
+					khbz: [{
+						required: true,
+						message: '请填写客户备注',
+						trigger: 'blur'
+					}]
+				},
+				dialogTableVisible: false,
+        		dialogFormVisible: false,
+			
 			},
 			mounted() {
-				let _this = this;
+				this.queryAll();
+			},
+			//方法
+			methods: {
+				queryAll(){
+					let _this = this;
 				axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryAll`)
 					.then(function(resp) {
 						_this.clientlist = resp.data;
 					});
-			},
-			//方法
-			methods: {
+					
+				},
 				handleClose(done) {
 					this.$confirm('确认关闭？')
 						.then(_ => {
@@ -95,11 +229,31 @@
 						})
 						.catch(_ => {});
 				},
+				cancel() {
+				this.$alert('您正在执行返回操作', '执行返回', {
+					confirmButtonText: '确定',
+					callback: action => {
+						this.$message({
+							type: 'info',
+							message: `action: ${ action }`
+						});
+					}
+				});
+			},
 				handelOpen() {
 					$("#cnt").load("addUserMessage.html");
 				},
-				updateUserMessage() {
-					this.$alert('您正在执行修改操作', '修改用户个人信息', {
+				/*handelOpen2() {
+					$("#cnt2").load("UpdateUserMessage.html");
+				},*/
+				/*queryUser(clientno){
+						let _this = this;
+				axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryUser`+clientno).then(resp => {
+						_this.clientlist = resp.data;
+				},
+				}*/
+				/*updateUserMessage(clientno) {
+					/*this.$alert('您正在执行修改操作', '修改用户个人信息', {
 						confirmButtonText: '确定',
 						callback: action => {
 							this.$message({
@@ -107,9 +261,33 @@
 								message: `action: ${ action }`
 							});
 						}
-					});
+					});*/
+					
+					/*let _this=this;
+					axios.put(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/update`, this.UserMessage).then(resp => {
+						if(resp.data == true) {
+							this.$message({
+								message: "修改用户成功",
+								type: 'success'
+							});
+						}
+					})
+					
 
-				},
+				},*/
+				/*queryOne(row, event, column){
+					this.clientlist={
+						clientno:row.clientno,
+						cliname:row.cliname,
+						cliphone:row.cliphone,
+						cliaddress:row.cliaddress,
+						employeeid:row.employeeid,
+						mid:row.mid,
+						sfz:row.sfz,
+						khbz:row.khbz
+						
+					}
+				},*/
 				deleteUser(clientno) {
 					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
 						confirmButtonText: '确定',
@@ -137,16 +315,41 @@
 						}
 
 					})
+						this.queryAll();
 
-					/*	let RowDate=this;
-						this.RowDate=val;
-						console.log(val)
-						*/
-
-				}
+				},
+				// 点击编辑按钮
+			updateUserMessage(clientno,row){
+			    this.editUserForm = true; //编辑信息模态框显示
+			    console.log(row)
+			    this.UserMessage = Object.assign({}, row); // 获得所有数据显示在编辑信息模态框里面
+			},
+			closeDialog() {
+					this.editUserForm = false;
+				},
+			// 点击编辑信息弹框的确定按钮
+			updateMessage(){
+			  let clientlist=this.editsForm;
+			  console.log(clientlist);
+			  let {clientno,cliname,cliphone,cliaddress,employeeid,mid,sfz,khbz} = clientlist;
+			 /* if(clientno==''||cliname==''||cliphone==''||cliaddress==''||employeeid==''||mid==''||sfz==''||khbz=''){
+			    this.$message.error("修改内容除了不可编辑的每一项都不准为空")
+			  }else{*/
+			    axios.put(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/update`, this.UserMessage).then(resp => {
+						if(resp.data == true) {
+							this.$message({
+								message: "修改用户成功",
+								type: 'success'
+							});
+						}
+					})
+			 /* }*/
+			},
+				
+				
 			}
 
-		})
+		});
 	</script>
 
 </html>
