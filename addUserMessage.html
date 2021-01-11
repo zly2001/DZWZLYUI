@@ -32,9 +32,11 @@
 					</el-input>
 				</div>
 				<div>
-					<el-input placeholder="请输入接待人员" v-model="AddUser.employeeid">
-						<template slot="prepend">*接待人员</template>
-					</el-input>
+					<label>*接待人员</label>
+					<el-select v-model="ConnectionPerson" placeholder="请选择接待人员">
+						<el-option v-for="item in ConnectionPerson" :key="item.employeeid" :label="item.ename" :value="item.value">
+						</el-option>
+					</el-select>
 				</div>
 				<div>
 					<el-input placeholder="请输入用户级别" v-model="AddUser.mid">
@@ -51,7 +53,6 @@
 						<template>*用户备注</template>
 					</el-input>
 				</div>
-				
 
 				<el-button type="primary" @click="cancel()">取消</el-button>
 				<el-button type="primary" @click="ensure()">确定</el-button>
@@ -68,6 +69,25 @@
 		var app1 = new Vue({
 			el: "#app1",
 			data: {
+				ConnectionPerson:{},
+				options: [{
+					value: '选项1',
+					label: '黄金糕'
+				}, {
+					value: '选项2',
+					label: '双皮奶'
+				}, {
+					value: '选项3',
+					label: '蚵仔煎'
+				}, {
+					value: '选项4',
+					label: '龙须面'
+				}, {
+					value: '选项5',
+					label: '北京烤鸭'
+				}],
+				value: '',
+
 				input1: "",
 				AddUser: {
 					clientno: "",
@@ -131,21 +151,32 @@
 						trigger: 'blur'
 					}]
 				}
-			
-		},
-		methods: {
-			cancel() {
-				this.$alert('您正在执行返回操作', '执行返回', {
-					confirmButtonText: '确定',
-					callback: action => {
-						this.$message({
-							type: 'info',
-							message: `action: ${ action }`
-						});
-					}
-				});
+
 			},
-			ensure() {
+			mounted(){
+				this.queryConnection();
+			},
+			methods: {
+				queryConnection(){
+					let _this=this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NJEmployeeAction/queryAll`)
+						.then(function(resp){
+							_this.ConnectionPerson=resp.data;
+						});
+					
+				},
+				cancel() {
+					this.$alert('您正在执行返回操作', '执行返回', {
+						confirmButtonText: '确定',
+						callback: action => {
+							this.$message({
+								type: 'info',
+								message: `action: ${ action }`
+							});
+						}
+					});
+				},
+				ensure() {
 					let _this = this;
 					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/insert`, this.AddUser).then(resp => {
 						if(resp.data == true) {
@@ -158,7 +189,6 @@
 				}
 
 			}
-		
 
 		});
 	</script>
