@@ -108,10 +108,10 @@
 										<el-button type="primary" @click="updateMessage()">确定</el-button>
 									</el-form>
 								</div>
-								<div slot="footer" class="dialog-footer">
+								<!--<div slot="footer" class="dialog-footer">
 									<el-button @click="dialogFormVisible = false">取 消</el-button>
 									<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-								</div>
+								</div>-->
 							</el-dialog>
 
 							</el-dialog>
@@ -132,17 +132,62 @@
 				</el-table-column>
 				<el-table-column prop="inid" label="维修编号" width="180">
 				</el-table-column>
-				<el-table-column prop="Brandid" label="车辆品牌id" width="180">
+				<el-table-column prop="brandid" label="车辆品牌id" width="180">
 				</el-table-column>
 				<el-table-column prop="jctdate" label="客户车辆进厂日期" width="180">
 				</el-table-column>
 				<el-table-column fixed="right" label="操作" width="100">
 		        <template slot-scope="scope">
-		        <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
-		        <el-button type="text" size="small">编辑</el-button>
-      </template>
-    </el-table-column>
-			</el-table>
+		        <el-button @click="deleteUserCar(scope.row.cno,scope.row)" type="text" size="small">删除</el-button>
+		        <el-button type="text" size="small" @click="updateUserCarMessage111(scope.row)">编辑</el-button>
+		  <el-dialog title="修改用户车辆信息" :visible="editCarForm" size="tiny" :modal-append-to-body='false' @close='closeCarDialog'>
+	<div id="app11">
+
+		<el-form :model="UserCarMessage" :rules="rules" ref="UserCarMessage" label-width="100px" class="demo-ruleForm">
+			<div>
+				<el-input placeholder="请输入车辆编号" v-model="	UserCarMessage.cno">
+					<template slot="prepend">*车辆编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入客户编号" v-model="UserCarMessage.clientno">
+					<template slot="prepend">*客户编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入维修编号" v-model="UserCarMessage.inid">
+					<template slot="prepend">*维修编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入品牌编号" v-model="UserCarMessage.brandid">
+					<template slot="prepend">*品牌编号</template>
+				</el-input>
+			</div>
+			<div>
+				<el-input placeholder="请输入进厂日期" v-model="UserCarMessage.jctdate">
+					<template slot="prepend">*进厂日期</template>
+				</el-input>
+			</div>
+			<el-button type="primary" @click="editCarForm=false">取消</el-button>
+			<el-button type="primary" @click="updateUserCarMessage()">确定</el-button>
+		</el-form>
+	</div>
+</el-dialog>
+</template>
+</el-table-column>
+ 
+		</el-table>
+		<el-button type="success" plain @click="dialogVisibleinsert = true">新增用户车辆信息</el-button>
+ 			<el-dialog title="提示" :visible.sync="dialogVisibleinsert" width="60%" :before-close="handleClose" @opened="handelOpenInsert" :destroy-on-close="true" :fullscreen="false">
+					<div id="cntinsert">
+						<span>正在新增用户信息</span>
+					</div>
+		<span slot="footer" class="dialog-footer">
+				    <el-button @click="dialogVisibleinsert = false">取 消</el-button>
+				    <el-button type="primary" @click="dialogVisibleinsert = false">确 定</el-button>
+ 				 </span>
+		</el-dialog>
 		</div>
 	</body>
 	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
@@ -150,192 +195,265 @@
 	<script type="text/javascript" src="js/axios.min.js"></script>
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
-	<script>var app = new Vue({
-	el: "#app",
-	data: {
-		editUserForm: false,
-		editsForm: false,
-		dialogVisible: false,
-		dialogVisible2: false,
-		Client: {},
-		clientlist: [],
-		UserMessage: {
-			clientno: "",
-			cliname: "",
-			cliphone: "",
-			cliaddress: "",
-			employeeid: "",
-			mid: "",
-			sfz: "",
-			khbz: ""
-		},
-		ClientCar:[],
-		rules: {
-			clientno: [{
-					required: true,
-					message: '请输入客户编号',
-					trigger: 'blur'
+	<script>
+		var app = new Vue({
+			el: "#app",
+			data: {
+				dialogVisibleinsert: false,
+				editCarForm: false,
+				editUserForm: false,
+				editsForm: false,
+				dialogVisible: false,
+				dialogVisible2: false,
+				Client: {},
+				clientlist: [],
+				UserMessage: {
+					clientno: "",
+					cliname: "",
+					cliphone: "",
+					cliaddress: "",
+					employeeid: "",
+					mid: "",
+					sfz: "",
+					khbz: ""
 				},
-				{
-					min: 3,
-					max: 5,
-					message: '长度在 3 到 5 个字符',
-					trigger: 'blur'
-				}
-			],
-			cliname: [{
-				required: true,
-				message: '请选择客户名称',
-				trigger: 'change'
-			}],
-			cliphone: [{
-				type: 'String',
-				required: true,
-				message: '请选择客户电话号码',
-				trigger: 'change'
-			}],
-			cliaddress: [{
-				type: 'String',
-				required: true,
-				message: '请选择客户地址',
-				trigger: 'change'
-			}],
-			employeeid: [{
-				type: 'array',
-				required: true,
-				message: '请至少选择一个接待人员',
-				trigger: 'change'
-			}],
-			mid: [{
-				required: true,
-				message: '请填写客户等级',
-				trigger: 'change'
-			}],
-			sfz: [{
-				required: true,
-				message: '请填写客户信息',
-				trigger: 'blur'
-			}],
-			khbz: [{
-				required: true,
-				message: '请填写客户备注',
-				trigger: 'blur'
-			}]
-		},
-		dialogTableVisible: false,
-		dialogFormVisible: false,
+				clientcarlist: [],
+				UserCarMessage: {
+					cno: "",
+					clientno: "",
+					inid: "",
+					Brandid: "",
+					jctdate: ""
+				},
+				ClientCar: [],
+				rules: {
+					clientno: [{
+							required: true,
+							message: '请输入客户编号',
+							trigger: 'blur'
+						},
+						{
+							min: 3,
+							max: 5,
+							message: '长度在 3 到 5 个字符',
+							trigger: 'blur'
+						}
+					],
+					cliname: [{
+						required: true,
+						message: '请选择客户名称',
+						trigger: 'change'
+					}],
+					cliphone: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户电话号码',
+						trigger: 'change'
+					}],
+					cliaddress: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户地址',
+						trigger: 'change'
+					}],
+					employeeid: [{
+						type: 'array',
+						required: true,
+						message: '请至少选择一个接待人员',
+						trigger: 'change'
+					}],
+					mid: [{
+						required: true,
+						message: '请填写客户等级',
+						trigger: 'change'
+					}],
+					sfz: [{
+						required: true,
+						message: '请填写客户信息',
+						trigger: 'blur'
+					}],
+					khbz: [{
+						required: true,
+						message: '请填写客户备注',
+						trigger: 'blur'
+					}]
+				},
+				dialogTableVisible: false,
+				dialogFormVisible: false,
 
-	},
-	mounted() {
-		this.queryAll();
-	},
-	//方法
-	methods: {
-		queryAll() {
-			let _this = this;
-			axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryAll`).then(function(resp) {
-					_this.clientlist = resp.data;
-				});
-
-		},
-		handleClose(done) {
-			this.$confirm('确认关闭？')
-				.then(_ => {
-					done(); //关闭
-				})
-				.catch(_ => {});
-		},
-		cancel() {
-			this.$alert('您正在执行返回操作', '执行返回', {
-				confirmButtonText: '确定',
-				callback: action => {
-					this.$message({
-						type: 'info',
-						message: `action: ${ action }`
+			},
+			mounted() {
+				this.queryAll();
+			},
+			//方法
+			methods: {
+				queryAll() {
+					let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryAll`).then(function(resp) {
+						_this.clientlist = resp.data;
 					});
-				}
-			});
-		},
-		handelOpen() {
-			$("#cnt").load("addUserMessage.html");
-		},
-		deleteUser(clientno) {
-			this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			}).then(() => {
-				this.$message({
-					type: 'success',
-					message: '删除成功!'
-				});
-			}).catch(() => {
-				this.$message({
-					type: 'info',
-					message: '已取消删除'
-				});
-			});
-			let _this = this;
-			axios.delete(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/delete/` + clientno).then(resp => {
-				console.log(resp);
-				if(resp.data.code == 200) {
-					this.$message({
-						message: "删除用户成功",
-						type: 'success'
+
+				},
+				handleClose(done) {
+					this.$confirm('确认关闭？')
+						.then(_ => {
+							done(); //关闭
+						})
+						.catch(_ => {});
+				},
+				cancel() {
+					this.$alert('您正在执行返回操作', '执行返回', {
+						confirmButtonText: '确定',
+						callback: action => {
+							this.$message({
+								type: 'info',
+								message: `action: ${ action }`
+							});
+						}
 					});
-				}
-
-			})
-			this.queryAll();
-
-		},
-		// 点击编辑按钮
-		updateUserMessage(clientno, row) {
-			this.editUserForm = true; //编辑信息模态框显示
-			console.log(row)
-			this.UserMessage = Object.assign({}, row); // 获得所有数据显示在编辑信息模态框里面
-		},
-		closeDialog() {
-			this.editUserForm = false;
-		},
-		// 点击编辑信息弹框的确定按钮
-		updateMessage() {
-			let clientlist = this.editsForm;
-			console.log(clientlist);
-			let {
-				clientno,
-				cliname,
-				cliphone,
-				cliaddress,
-				employeeid,
-				mid,
-				sfz,
-				khbz
-			} = clientlist;
-			axios.put(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/update`, this.UserMessage).then(resp => {
-				if(resp.data == true) {
-					this.$message({
-						message: "修改用户成功",
-						type: 'success'
+				},
+				handelOpen() {
+					$("#cnt").load("addUserMessage.html");
+				},
+				handelOpenInsert(){
+					$("#cntinsert").load("addUserCarMessage.html");
+				},
+				deleteUser(clientno) {
+					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
 					});
+					let _this = this;
+					axios.delete(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/delete/` + clientno).then(resp => {
+						console.log(resp);
+						if(resp.data.code == 200) {
+							this.$message({
+								message: "删除用户成功",
+								type: 'success'
+							});
+						}
+
+					})
+					this.queryAll();
+
+				},
+				// 点击编辑按钮
+				updateUserMessage(clientno, row) {
+					this.editUserForm = true; //编辑信息模态框显示
+					console.log(row)
+					this.UserMessage = Object.assign({}, row); // 获得所有数据显示在编辑信息模态框里面
+				},
+				closeDialog() {
+					this.editUserForm = false;
+				},
+				// 点击编辑信息弹框的确定按钮
+				updateMessage() {
+					let clientlist = this.editsForm;
+					console.log(clientlist);
+					let {
+						clientno,
+						cliname,
+						cliphone,
+						cliaddress,
+						employeeid,
+						mid,
+						sfz,
+						khbz
+					} = clientlist;
+					axios.put(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/update`, this.UserMessage).then(resp => {
+						if(resp.data == true) {
+							this.$message({
+								message: "修改用户成功",
+								type: 'success'
+							});
+						}
+					})
+				},
+				updateUserCarMessage111(cno, row) {
+					this.editCarForm = true; //编辑信息模态框显示
+					console.log(row)
+					this.UserCarMessage = Object.assign({}, row); // 获得所有数据显示在编辑信息模态框里面
+				},
+				closeCarDialog() {
+					this.editCarForm = false;
+				},
+				updateUserCarMessage111(row){
+					this.editCarForm = true; //编辑信息模态框显示
+					this.UserCarMessage=row;
+				},
+				updateUserCarMessage() {
+					let {
+						cno,
+						clientno,
+						inid,
+						Brandid,
+						jctdate
+					}=this.clientcarlist;
+					console.log(this.clientcarlist);
+					axios.put("http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/update", this.UserCarMessage).then(resp => {
+						if(resp.data == true) {
+							this.$message({
+								message: "修改用户成功",
+								type: 'success'
+							});
+						}
+					})
+
+				},
+				queryUserCar(row) {
+					this.$message('正在显示你的车辆信息' + row.clientno);
+					console.log(row.clientno)
+					let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/queryAll/${row.clientno}`).then(resp => {
+						_this.ClientCar = resp.data;						
+					});
+					
+				},
+				deleteUserCar(cno, row) {
+					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+					let _this = this;
+					axios.delete(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/delete/` + cno).then(resp => {
+						console.log(resp);
+						if(resp.data.code == 200) {
+							this.$message({
+								message: "删除用户成功",
+								type: 'success'
+							});
+						}
+
+					})
+					this.queryUserCar();
+
 				}
-			})
-		},
-		queryUserCar(row){
-			this.$message('正在显示你的车辆信息'+row.clientno);
-			console.log(row.clientno)
-			let _this=this;
-			axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/queryAll/${row.clientno}`).then(resp => {
-				_this.ClientCar = resp.data;
-				});
-		/*	$.post("http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/queryAll",{clientno:row.clientno},function(data){},"json")
-			*/
-		}
-		
-		
 
-	}
+			}
 
-});</script>
+		});
+	</script>
 
 </html>
