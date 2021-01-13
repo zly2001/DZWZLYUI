@@ -3,6 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>站内维修</title>
 		<style>
 			.text {
@@ -47,7 +48,7 @@
 				</div>
 				<el-row>
 					<el-col :span="10" style="margin-left: 10px;">
-						<el-form ref="form" :model="Inststion" label-width="80px" size="mini">
+						<el-form ref="form" :rules="rules" :model="Inststion" label-width="80px" size="mini">
 							<el-row>
 								<el-col :span="12">
 									<el-form-item label="维修编号">
@@ -55,42 +56,47 @@
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
-									<el-form-item label="车牌号">
+									<el-form-item label="车牌号" prop="cno">
 										<el-input v-model="Inststion.cno"></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<el-form-item label="技班">
-										<el-select v-model="Inststion.tid" placeholder="请选择技班">
-											<el-option v-for="(team,i) in Team" :key="team.tid" :label="team.tname" :value="team.tid">
+									<el-form-item label="技班" prop="tid">
+										<el-select v-model="team" @change="changeMoney" placeholder="请选择技班">
+											<el-option v-for="(team,i) in Team" :key="team.tid" :label="team.tname" :value="team">
 											</el-option>
 										</el-select>
+									</el-form-item>
+								</el-col>
+								<el-col :span="12">
+									<el-form-item label="工薪/小时" prop="">
+										<el-input :disabled="true" v-model="Inststion.jyjg"></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
 							<el-row>
 								<el-col :span="12">
-									<el-form-item label="驾驶人">
+									<el-form-item label="驾驶人" prop="zrr">
 										<el-input v-model="Inststion.zrr" placeholder="请输入驾驶人"></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
-									<el-form-item label="质检员">
+									<el-form-item label="质检员" prop="zjy">
 										<el-select v-model="Inststion.zjy" placeholder="请选择质检员">
 											<el-option label="张来遇" value="1"></el-option>
 											<el-option label="李金宇" value="2"></el-option>
 										</el-select>
 								</el-col>
 							</el-row>
-							<el-form-item label="预计完工">
+							<el-form-item label="预计完工" prop="yjday">
 								<el-date-picker v-model="Inststion.yjday" type="date" placeholder="选择日期">
 								</el-date-picker>
 							</el-form-item>
 							<el-row v-show="isShow1">
 								<el-col :span="12">
-									<el-form-item label="救援车辆">
+									<el-form-item label="救援车辆" prop="workcarjlid">
 										<el-select v-model="Inststion.workcarjlid" placeholder="请选择救援车辆">
 											<el-option label="张来遇" value="1"></el-option>
 											<el-option label="李金宇" value="2"></el-option>
@@ -98,8 +104,8 @@
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
-									<el-form-item label="里程数">
-										<el-input v-model="Inststion.lc" placeholder="/公里"></el-input>
+									<el-form-item label="/公里" prop="lc">
+										<el-input v-model="Inststion.lc" :disabled="true" placeholder="/公里"></el-input>
 								</el-col>
 							</el-row>
 							<el-form-item label="备注">
@@ -112,8 +118,19 @@
 							</el-form-item>
 						</el-form>
 					</el-col>
-					<el-col v-show="isShow1" :span="12">
-						地图{{isShow1}}
+					<!-- 百度地图 -->
+					<el-col v-show="isShow1" :span="11" :offset="1">
+						<el-row>
+							<el-col :span="6">
+								<el-input v-model="endaddress" placeholder="请输入终点" />
+							</el-col>
+							<el-col :span="6" style="margin-left: 15px;">
+								<el-button type="primary" @click="BMapLabel">搜索</el-button>
+							</el-col>
+						</el-row>
+						<el-row id="baidudt" :span="24" style="margin-top:10px;height:350px;box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)">
+
+						</el-row>
 					</el-col>
 				</el-row>
 				<el-row>
@@ -128,7 +145,7 @@
 								</el-form-item>
 							</el-form>
 							<template>
-								<el-table :data="Items" @selection-change="handleSelectionChange" stripe style="width: 100%; height=250;">
+								<el-table ref="multipleTable" :data="Items" :row-key="(row) => row.itemsid" @selection-change="handleSelectionChange" stripe style="width: 100%; height=250;">
 									<el-table-column type="index" label="序号" width="50">
 									</el-table-column>
 									<el-table-column prop="itemsname" label="维修项目">
@@ -139,7 +156,7 @@
 									</el-table-column>
 									<el-table-column prop="itemsxh" label="项目介绍">
 									</el-table-column>
-									<el-table-column type="selection">
+									<el-table-column type="selection" :reserve-selection="true">
 									</el-table-column>
 								</el-table>
 							</template>
@@ -166,14 +183,14 @@
 							</el-table-column>
 							<el-table-column label="数量">
 								<template slot-scope="scope">
-									<el-input-number v-model="scope.row.xqsl" @change="handleChange" :min="1" :max="10" label="描述文字"></el-input-number>
+									<el-input-number v-model="scope.row.xqsl" @change="handleChange(scope.row)" :min="1" :max="10" label="描述文字"></el-input-number>
 								</template>
 							</el-table-column>
 							<el-table-column prop="column1" label="价格">
 							</el-table-column>
 							<el-table-column label="操作">
 								<template slot-scope="scope">
-									<el-button type="danger" icon="el-icon-delete" @click.native.prevent="deleteWxxqs(scope.$index, Wxxqs)" circle></el-button>
+									<el-button size="mini" type="danger" icon="el-icon-delete" @click="deleteWxxqs(scope.$index)" circle></el-button>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -186,6 +203,12 @@
 		var zlyZNWX = new Vue({
 			el: "#zlyZNWX",
 			data: {
+				//百度地图对象
+				map: "",
+				//百度地图属性
+				localSearch: "",
+				//百度地图终点
+				endaddress: "",
 				//维修开单
 				Inststion: {
 					inid: "",
@@ -206,9 +229,49 @@
 					zjy: "",
 					zrr: "",
 					zhgs: "",
-					jyjg: "",
+					jyjg: 0,
 					itemsid: ""
 				},
+				rules: {
+					cno: [{
+						required: true,
+						message: '请输入车牌号',
+						trigger: 'blur'
+					}],
+					yjday: [{
+						required: true,
+						message: '请选择预计完工日期',
+						trigger: 'change'
+					}],
+					zjy: [{
+						type: 'date',
+						required: true,
+						message: '请选择质检员',
+						trigger: 'change'
+					}],
+					workcarjlid: [{
+						required: true,
+						message: '请选择救援车辆',
+						trigger: 'change'
+					}],
+					zrr: [{
+						required: true,
+						message: '请输入驾驶人',
+						trigger: 'blur'
+					}],
+					lc: [{
+						required: true,
+						message: '请选择救援地点',
+						trigger: 'change'
+					}],
+					team: [{
+						required: true,
+						message: '请选择技班',
+						trigger: 'change'
+					}]
+				},
+				//技班
+				team: {},
 				loading: true,
 				dialogVisible: false,
 				isShow1: false,
@@ -219,11 +282,21 @@
 				Itemstype: [],
 				//维修项目
 				Items: [],
+				//需要取消的维修项目
+				Items1: [],
 				//维修详情
 				Wxxqs: [],
 				messages: []
 			},
 			mounted() {
+				//百度地图
+				this.map = new BMap.Map("baidudt"); //创建地图对象
+				this.map.centerAndZoom(new BMap.Point(113.115287, 27.909567), 13); //开始地点的经纬度九郎山家园
+				this.map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
+				this.map.addControl(new BMap.NavigationControl()); // 添加平移缩放控件  
+				this.map.addControl(new BMap.ScaleControl()); // 添加比例尺控件  
+				this.map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件  
+				this.localSearch = new BMap.LocalSearch(this.map);
 				//查询所有班组
 				let _this = this;
 				axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction/selectAll`).then(function(resp) {
@@ -231,8 +304,47 @@
 				});
 			},
 			methods: {
-				// 获取当前日期的方法
-				getProjectNum() {
+				//根据开始地点与救援地点规划路线计算里程
+				BMapLabel() {
+						let _this = this;
+						var keyword = this.endaddress; //搜索的终点						
+						this.localSearch.setSearchCompleteCallback(function(searchResult) {
+							var poi = searchResult.getPoi(0);　
+							var myP1 = new BMap.Point(113.115287, 27.909567); //开始地点的经纬度九郎山家园			
+							var myP2 = new BMap.Point(poi.point.lng, poi.point.lat); //终点传入的经纬度 
+							_this.map.clearOverlays(); //清除地图上所有的覆盖物
+							var driving = new BMap.DrivingRoute(_this.map); //创建驾车实例  
+							driving.search(myP1, myP2);
+							driving.setSearchCompleteCallback(function() {
+								var pts = driving.getResults().getPlan(0).getRoute(0).getPath(); //通过驾车实例，获得一系列点的数组  
+								var polyline = new BMap.Polyline(pts);
+								_this.map.addOverlay(polyline);
+								//创建2个marker  
+								var m1 = new BMap.Marker(myP1);
+								var m3 = new BMap.Marker(myP2);
+								_this.map.addOverlay(m1);
+								_this.map.addOverlay(m3);
+								//创建2个label
+								var lab1 = new BMap.Label("起点", {
+									position: myP1
+								});
+								var lab2 = new BMap.Label("终点", {
+									position: myP2
+								});
+								_this.map.addOverlay(lab1);
+								_this.map.addOverlay(lab2);
+								//获取开始地点与救援地点的距离/米
+								_this.Inststion.lc = ((BMapLib.GeoUtils.getDistance(myP1, myP2)) / 1000).toFixed(1);
+								setTimeout(function() {
+									_this.map.setViewport([myP1, myP2]);
+									//_thismap.setViewport([myP1,myP2]);//调整到最佳视野  
+								}, 1000);
+							});
+						});
+						_this.localSearch.search(keyword);
+					},
+					// 获取当前日期的方法
+					getProjectNum() {
 						const projectTime = new Date() // 当前中国标准时间
 						const Year = projectTime.getFullYear() // 获取当前年份 支持IE和火狐浏览器.
 						const Month = projectTime.getMonth() + 1 // 获取中国区月份
@@ -287,21 +399,7 @@
 					//新增维修详情
 					insertWxxq() {
 						let _this = this;
-						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxqs).then(function(resp) {
-							if (resp.data.code == "200") {
-								_this.$message({
-									showClose: true,
-									message: '新增成功!',
-									type: 'success'
-								});
-							} else {
-								_this.$message({
-									showClose: true,
-									message: '新增失败!',
-									type: 'error'
-								});
-							}
-						});
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxqs).then(function(resp) {});
 					},
 					//关闭模态框
 					handleClose(done) {
@@ -315,17 +413,20 @@
 					showZWWXinput() {
 						if (this.Inststion.iszn == 1) {
 							this.isShow1 = false;
-							this.lc = "";
-							this.workcarjlid = "";
+							this.Inststion.lc = "";
+							this.Inststion.workcarjlid = "";
+							this.endaddress = "";
 						} else {
 							this.isShow1 = true;
 						}
 					},
 					//复选框勾选事件
 					handleSelectionChange(val) {
-						var Wxxqs = [];
+						this.Wxxqs = [];
+						this.Items1 = [];
+						let _this = this;
 						val.forEach((item, i) => {
-							//维修详情对象
+							//维修详情对象							
 							var Wxxq = {};
 							Wxxq["inid"] = "";
 							Wxxq["spid"] = item.itemsid;
@@ -333,16 +434,35 @@
 							Wxxq["xqsl"] = this.Wxxqs[i] == null ? 1 : this.Wxxqs[i].xqsl;
 							Wxxq["xmoney"] = item.itemsprice;
 							Wxxq["column1"] = this.Wxxqs[i] == null ? item.itemsprice : this.Wxxqs[i].column1;
-							Wxxqs[i] = Wxxq;
+							_this.Wxxqs.push(Wxxq);
+							_this.Items1.push(item);
 						});
-						this.Wxxqs = Wxxqs;
 					},
 					//维修详情删除事件
-					deleteWxxqs(index, rows) {
-						rows.splice(index, 1);
+					deleteWxxqs(index) {
+						let _this = this;
+						this.$nextTick(() => {
+							this.$refs.multipleTable.toggleRowSelection(_this.Items1[index], false);
+						});
 					},
 					//数量改变事件
-					handleChange(value) {}
+					handleChange(row) {
+						row.column1 = row.xqsl * row.xmoney;
+					},
+					changeMoney() {
+						this.tid = this.team.tid;
+						let _this = this;
+						console.log(this.team);
+						this.team.artisan.forEach((item, i) => {							
+							if(item.stars.xmoney == undefined){																
+								_this.jyjg += parseFloat(_this.team.artisan[i-1].stars.xmoney);
+								alert(_this.jyjg);
+							}
+							else{								
+								_this.jyjg += parseFloat(item.stars.xmoney);
+							}
+						});						
+					}
 			}
 		});
 	</script>
