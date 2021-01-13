@@ -64,7 +64,7 @@
 							<el-row>
 								<el-col :span="12">
 									<el-form-item label="技班" prop="tid">
-										<el-select v-model="team" @change="changeMoney" placeholder="请选择技班">
+										<el-select v-model="team" value-key="tid" @change="changeMoney" placeholder="请选择技班">
 											<el-option v-for="(team,i) in Team" :key="team.tid" :label="team.tname" :value="team">
 											</el-option>
 										</el-select>
@@ -72,7 +72,7 @@
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="工薪/小时" prop="">
-										<el-input :disabled="true" v-model="Inststion.jyjg"></el-input>
+										<el-input :disabled="true" v-model="Inststion.itemsid"></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
@@ -96,16 +96,21 @@
 							</el-form-item>
 							<el-row v-show="isShow1">
 								<el-col :span="12">
-									<el-form-item label="救援车辆" prop="workcarjlid">
-										<el-select v-model="Inststion.workcarjlid" placeholder="请选择救援车辆">
-											<el-option label="张来遇" value="1"></el-option>
-											<el-option label="李金宇" value="2"></el-option>
+									<el-form-item label="救援车辆">
+										<el-select v-model="Workcar" value-key="wid" @change="changeCarMoney" prop="workcarjlid" placeholder="请选择救援车辆">
+											<el-option v-for="(workcar,i) in Workcars" :key="workcar.wid" :label="workcar.caid" :value="workcar">
 										</el-select>
 									</el-form-item>
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="/公里" prop="lc">
 										<el-input v-model="Inststion.lc" :disabled="true" placeholder="/公里"></el-input>
+								</el-col>
+							</el-row>
+							<el-row v-show="isShow1">
+								<el-col :span="12">
+									<el-form-item label="救援价格/元" prop="lc">
+										<el-input v-model="Workcardesc.column1" :disabled="true" placeholder="/元"></el-input>
 								</el-col>
 							</el-row>
 							<el-form-item label="备注">
@@ -230,7 +235,7 @@
 					zrr: "",
 					zhgs: "",
 					jyjg: 0,
-					itemsid: ""
+					itemsid: 0
 				},
 				rules: {
 					cno: [{
@@ -244,7 +249,6 @@
 						trigger: 'change'
 					}],
 					zjy: [{
-						type: 'date',
 						required: true,
 						message: '请选择质检员',
 						trigger: 'change'
@@ -278,6 +282,12 @@
 				activeName: "first",
 				//班组
 				Team: [],
+				//救援车辆s
+				Workcars: [],
+				//救援车辆
+				Workcar: {},
+				//救援记录
+				Workcardesc: {},
 				//维修项目类型
 				Itemstype: [],
 				//维修项目
@@ -297,10 +307,14 @@
 				this.map.addControl(new BMap.ScaleControl()); // 添加比例尺控件  
 				this.map.addControl(new BMap.OverviewMapControl()); //添加缩略地图控件  
 				this.localSearch = new BMap.LocalSearch(this.map);
-				//查询所有班组
+				//查询所有空闲中且班组里技工人数大于0的班组
 				let _this = this;
 				axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction/selectAll`).then(function(resp) {
 					_this.Team = resp.data;
+				});
+				//查询所有空闲中的救援车辆				
+				axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcarAction`).then(function(resp) {
+					_this.Workcars = resp.data;
 				});
 			},
 			methods: {
@@ -362,10 +376,7 @@
 						}
 						// 调用获取当前日期的方法加四位随机数  赋值表单中的项目编号 如果是6位或者8位随机数，相应的 *1000000或者 *100000000就行了						
 						this.Inststion.inid = Math.floor(CurrentDate + Math.random() * 10000);
-						if (this.Wxxqs[0] != null) {
-							this.Wxxqs[0].inid = this.Inststion.inid;
-							this.insertInststion();
-						}
+						this.insertInststion();
 					},
 					//查询所有维修项目类型
 					selectAllByItemstype() {
@@ -377,16 +388,24 @@
 					//新增维修单
 					insertInststion() {
 						let _this = this;
+						this.Inststion.statusid = this.Inststion.iszn;
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion).then(function(resp) {
 							if (resp.data.code == "200") {
 								if (_this.Wxxqs[0] != null) {
+									_this.Wxxqs[0].inid = _this.Inststion.inid;
 									_this.insertWxxq();
+								}
+								if (_this.Inststion.iszn == "2") {								
+									_this.Workcardesc.inid = _this.Inststion.inid;
+									_this.insertWorkcardesc();
+									//_this.updateWorkcar();
 								}
 								_this.$message({
 									showClose: true,
 									message: '新增维修单成功!',
 									type: 'success'
 								});
+								indexApp.showView("html/zly/weixiukaidan.html");
 							} else {
 								_this.$message({
 									showClose: true,
@@ -398,8 +417,15 @@
 					},
 					//新增维修详情
 					insertWxxq() {
-						let _this = this;
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxqs).then(function(resp) {});
+					},
+					//新增救援记录
+					insertWorkcardesc() {
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcardescAction`, this.Workcardesc).then(function(resp) {});
+					},
+					//修改救援车辆
+					updateWorkcar() {
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcardescAction`, this.Workcar).then(function(resp) {});
 					},
 					//关闭模态框
 					handleClose(done) {
@@ -449,19 +475,29 @@
 					handleChange(row) {
 						row.column1 = row.xqsl * row.xmoney;
 					},
+					//选择改变技班的工薪
 					changeMoney() {
-						this.tid = this.team.tid;
+						this.Inststion.itemsid = 0.0;
 						let _this = this;
-						console.log(this.team);
-						this.team.artisan.forEach((item, i) => {							
-							if(item.stars.xmoney == undefined){																
-								_this.jyjg += parseFloat(_this.team.artisan[i-1].stars.xmoney);
-								alert(_this.jyjg);
+						this.team.artisan.forEach((item, i) => {
+							if (item.stars.xmoney == undefined) {
+								_this.Inststion.itemsid += parseFloat(_this.team.artisan[i - 1].stars.xmoney);
+							} else {
+								_this.Inststion.itemsid += parseFloat(item.stars.xmoney);
 							}
-							else{								
-								_this.jyjg += parseFloat(item.stars.xmoney);
-							}
-						});						
+						});
+					},
+					//选择改变救援车辆价格事件
+					changeCarMoney() {
+						this.Inststion.workcarjlid = this.Workcar.wid;
+						this.Workcardesc = {
+							inid: this.Inststion.inid,
+							wid: this.Workcar.wid,
+							firstaddress: "九郎山家园",
+							endaddress: this.endaddress,
+							zgls: this.Inststion.lc,
+							column1: parseFloat(this.Inststion.lc) < 20.0 ? (parseFloat(this.Inststion.lc) - 1) * this.Workcar.mglj + parseFloat(this.Workcar.czt) : (parseFloat(this.Inststion.lc) - 21) * this.Workcar.ccglj + 19 * parseFloat(this.Workcar.mglj) + parseFloat(this.Workcar.czt)
+						}
 					}
 			}
 		});
