@@ -36,14 +36,29 @@
 					<el-col :span="4">
 						维修开单
 						<el-button @click="showView('html/zly/zlyZNWX.html')" type="primary">站内维修</el-button>
-					</el-col>					
-					<el-col :span="5" :offset="12">
+					</el-col>
+					<el-col :span="5" :offset="7">
+						<template>
+							<el-select v-model="value" placeholder="请选择维修单状态">
+								<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+								</el-option>
+							</el-select>
+						</template>
+					</el-col>
+					<el-col :span="5">
 						<el-input v-model="message" placeholder="请输入车牌号"></el-input>
 					</el-col>
 					<el-col :span="2" style="margin-left: 10px;">
 						<el-button type="primary">搜索</el-button>
 					</el-col>
 				</div>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修单" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
 				<el-row>
 					<template>
 						<el-table :data="messages" stripe style="width: 100%">
@@ -58,8 +73,27 @@
 				</el-row>
 				<el-row>
 					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修详情" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="messages" stripe style="width: 100%">
+							<el-table-column prop="message" label="日期" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+				<!--<el-row>
+					<template>
 						<el-tabs v-model="activeName" @tab-click="handleClick">
-							<el-tab-pane label="正在维修" name="first"></el-tab-pane>
+							<el-tab-pane label="维修详情" name="first"></el-tab-pane>
 							<el-tab-pane label="维修历史" name="second"></el-tab-pane>
 							<el-tab-pane label="角色管理" name="third"></el-tab-pane>
 						</el-tabs>
@@ -88,7 +122,7 @@
 							</el-table-column>
 						</el-table>
 					</template>
-				</el-row>
+				</el-row>-->
 			</el-card>
 		</div>
 	</body>
@@ -100,6 +134,7 @@
 				isShow1: false,
 				isShow2: true,
 				activeName: "second",
+				activeName1: "first",
 				messages: []
 			},
 			methods: {

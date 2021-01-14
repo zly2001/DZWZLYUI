@@ -109,7 +109,7 @@
 							</el-row>
 							<el-row v-show="isShow1">
 								<el-col :span="12">
-									<el-form-item label="救援价格/元" prop="lc">
+									<el-form-item label="救援/元" prop="lc">
 										<el-input v-model="Workcardesc.column1" :disabled="true" placeholder="/元"></el-input>
 								</el-col>
 							</el-row>
@@ -143,7 +143,7 @@
 						<div>
 							<el-form ref="form" label-width="80px" size="mini">
 								<el-form-item label="项目类型">
-									<el-select v-model="Items" placeholder="请选择项目类型">
+									<el-select v-model="Items" value-key="itemstypeid" placeholder="请选择项目类型">
 										<el-option v-for="(itemstype,i) in Itemstype" :key="itemstype.itemstypeid" :label="itemstype.itemstypename" :value="itemstype.items">
 										</el-option>
 									</el-select>
@@ -313,7 +313,7 @@
 					_this.Team = resp.data;
 				});
 				//查询所有空闲中的救援车辆				
-				axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcarAction`).then(function(resp) {
+				axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcarAction/selectAllByWorkcar/13`).then(function(resp) {
 					_this.Workcars = resp.data;
 				});
 			},
@@ -388,17 +388,21 @@
 					//新增维修单
 					insertInststion() {
 						let _this = this;
+						//计算维修项目总金额
+						this.Wxxqs.forEach((item, i) => {
+							this.Inststion.jyjg += parseFloat(item.column1);
+							item.inid = this.Inststion.inid;
+						});
 						this.Inststion.statusid = this.Inststion.iszn;
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion).then(function(resp) {
 							if (resp.data.code == "200") {
-								if (_this.Wxxqs[0] != null) {
-									_this.Wxxqs[0].inid = _this.Inststion.inid;
+								if (_this.Wxxqs[0] != null) {								
 									_this.insertWxxq();
 								}
-								if (_this.Inststion.iszn == "2") {								
+								if (_this.Inststion.iszn == "2") {
 									_this.Workcardesc.inid = _this.Inststion.inid;
 									_this.insertWorkcardesc();
-									//_this.updateWorkcar();
+									_this.updateWorkcar();
 								}
 								_this.$message({
 									showClose: true,
@@ -423,9 +427,12 @@
 					insertWorkcardesc() {
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcardescAction`, this.Workcardesc).then(function(resp) {});
 					},
-					//修改救援车辆
+					//修改救援车辆与技班状态
 					updateWorkcar() {
-						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcardescAction`, this.Workcar).then(function(resp) {});
+						this.Workcar.statusid = 14;
+						this.team.type = 12;
+						axios.put(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcarAction`, this.Workcar).then(function(resp) {});
+						axios.put(`http://127.0.0.1:8080/DZWWeb//ljy/api/TeamAction`, this.team).then(function(resp) {});
 					},
 					//关闭模态框
 					handleClose(done) {
