@@ -10,76 +10,75 @@
 	<body>
 		<div id="app">
 			<template>
-				<el-radio v-model="radio" label="1">现金支付</el-radio>
-				<el-radio v-model="radio" label="2">余额支付</el-radio>
-				<el-radio v-model="radio" label="3">网银支付</el-radio>
+				<el-radio v-model="1" label="1">现金支付</el-radio>
+				<el-radio v-model="2" label="2">余额支付</el-radio>
+				<el-radio v-model="3" label="3">网银支付</el-radio>
 			</template>
 			<el-form :model="CaculationList" :rules="rules" ref="CaculationList" label-width="100px" class="demo-ruleForm">
-			<div>
-				<el-input placeholder="请输入客户名称" v-model="CaculationList.Customer">
-					<template slot="prepend">客户</template>
+				<div>
+					<el-input placeholder="请输入客户名称" v-model="CaculationList.Customer">
+						<template slot="prepend">客户</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入客户余额" v-model="CaculationList.CountNumber">
+						<template slot="prepend">客户余额</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入维修单号" v-model="CaculationList.fixId">
+						<template slot="prepend">维修单号</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入收银员" v-model="CaculationList.RecivePerson">
+						<template slot="prepend">收银员</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="根据工时和技工人员算出应付金额" v-model="CaculationList.ShouldPay">
+						<template slot="prepend">应付金额</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="实付金额" v-model="CaculationList.RealPay">
+						<template slot="prepend">实付金额</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="是否有折扣" v-model="CaculationList.Discount">
+						<template slot="prepend">优惠</template>
+					</el-input>
+				</div>
+				备注
+				<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="CaculationList.remark">
 				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="请输入客户余额" v-model="CaculationList.CountNumber">
-					<template slot="prepend">客户余额</template>
-				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="请输入维修单号" v-model="CaculationList.fixId">
-					<template slot="prepend">维修单号</template>
-				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="请输入收银员" v-model="CaculationList.RecivePerson">
-					<template slot="prepend">收银员</template>
-				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="根据工时和技工人员算出应付金额" v-model="CaculationList.ShouldPay">
-					<template slot="prepend">应付金额</template>
-				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="实付金额" v-model="CaculationList.RealPay">
-					<template slot="prepend">实付金额</template>
-				</el-input>
-			</div>
-			<div>
-				<el-input placeholder="是否有折扣" v-model="CaculationList.Discount">
-					<template slot="prepend">优惠</template>
-				</el-input>
-			</div>
-			备注
-			<el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="CaculationList.remark">
-			</el-input>
 
-			<el-button type="success" plain>确定保存</el-button>
-			<el-button type="success" plain>单据打印</el-button>
+				<el-button type="success" plain>确定保存</el-button>
+				<el-button type="success" plain>单据打印</el-button>
 			</el-form>
-			<template>
-				<el-table :data="tableData" border style="width: 100%">
-					<el-table-column fixed prop="Customer" label="客户" width="150">
-					</el-table-column>
-					<el-table-column prop="CountNumber" label="账户余额" width="120">
-					</el-table-column>
-					<el-table-column prop="fixId" label="维修单号" width="120">
-					</el-table-column>
-					<el-table-column prop="RecivePerson" label="收银员" width="120">
-					</el-table-column>
-					<el-table-column prop="ShouldPay" label="应付金额" width="300">
-					</el-table-column>
-					<el-table-column prop="RealPay" label="实付金额" width="120">
-					</el-table-column>
-					<el-table-column prop="Discount" label="折扣" width="120">
-					</el-table-column>
-					<el-table-column fixed="right" label="操作" width="100">
-						<template slot-scope="scope">
-							<el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-							<el-button type="text" size="small">结算</el-button>
-						</template>
-					</el-table-column>
-				</el-table>
+			<el-table :data="Inststion" border style="width: 100%">
+				<el-table-column fixed prop="Customer" label="客户" width="150">
+				</el-table-column>
+				<el-table-column prop="CountNumber" label="账户余额" width="120">
+				</el-table-column>
+				<el-table-column prop="fixId" label="维修单号" width="120">
+				</el-table-column>
+				<el-table-column prop="RecivePerson" label="收银员" width="120">
+				</el-table-column>
+				<el-table-column prop="ShouldPay" label="应付金额" width="300">
+				</el-table-column>
+				<el-table-column prop="RealPay" label="实付金额" width="120">
+				</el-table-column>
+				<el-table-column prop="Discount" label="折扣" width="120">
+				</el-table-column>
+				<el-table-column fixed="right" label="操作" width="100">
+					<template slot-scope="scope">
+						<el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+						<el-button type="text" size="small">结算</el-button>
+					</template>
+				</el-table-column>
+			</el-table>
 		</div>
 	</body>
 	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
@@ -88,39 +87,38 @@
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<script>
-		var app=new Vue({
-			el:"#app",
-			data:{
-				CaculationList:{
-					Customer:"",
-					CountNumber:"",
-					fixId:"",
-					RecivePerson:"",
-					ShouldPay:"",
-					RealPay:"",
-					Discount:"",
-					remark:""
-				},
-				customerPay:[],
-				 totalMoney: 0, //订单总价格
-				 totalCount: 0,  //订单商品总数量
-				 EnginePerson:100, //工程师价格
-			},
-			mmounted(){
+		var app = new Vue({
+			el: "#app",
+			data: {
 				
 			},
-			methods:{
-				queryfixdetail(){
-					let _this=this;
+			mounted() {
+				this.selectAllByCnoAndStatusid();
+			},
+			methods: {
+				//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+				//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+				selectAllByCnoAndStatusid() {
+					let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
+						cno: _this.cno,
+						statusid: _this.statusid
+					}).then(function(resp) {
+						_this.Inststion = resp.data;
+						console.log(_this.Inststion);
+					});
+				},
+				queryfixdetail() {
+					let _this = this;
 					axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientAction/queryAll`).then(function(resp) {
 						_this.customerPay = resp.data;
 					});
 				},
-				CaculationPay(){
-					
+				CaculationPay() {
+
 				},
-				CheckDetail(){
-					
+				CheckDetail() {
+
 				}
 			}
 		});
