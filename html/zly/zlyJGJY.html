@@ -30,7 +30,7 @@
 	</head>
 
 	<body>
-		<div id="weixiukaidan">
+		<div id="zlyJGJY">
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
 					<el-col :span="4">
@@ -227,18 +227,15 @@
 		</div>
 	</body>
 	<script>
-		var weixiukaidan = new Vue({
-			el: "#weixiukaidan",
+		var zlyJGJY = new Vue({
+			el: "#zlyJGJY",
 			data: {
 				//维修单
 				Inststion1: {},
 				//返工记录
 				Fangong: {
-					inid: this.Inststion1.inid,
-					wugongtypeid: this.wugongtype.wugongtypeid,
-					fprice: this.wugongtype.column1,
 					fdesc: ""
-				}
+				},
 				//返工信息的显示隐藏1
 				showJGJYinputIsTrue1: false,
 				//返工信息的显示隐藏2
@@ -305,6 +302,7 @@
 					},
 					//查询所有维修项目类型
 					selectAllByItemstype() {
+						//this.Items=null;
 						this.selectAllByWugongtype();
 						let _this = this;
 						axios.get(`http://127.0.0.1:8080/DZWWeb/lp/api/ItemstypeAction/selectAll`).then(function(resp) {
@@ -319,41 +317,49 @@
 						});
 					},
 					//新增维修详情
-					insertWxxq() {
-						console.log(this.Wxxq1);
+					insertWxxq() {						
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxq1).then(function(resp) {});
 					},
 					//新增返工记录
 					insertFangong() {
-						console.log(this.Fangong);
+						this.Fangong = {
+							inid: this.Inststion1.inid,
+							wugongtypeid: this.wugongtype.wugongtypeid,
+							fprice: this.wugongtype.column1
+						}						
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/FangongAction`, this.Fangong).then(function(resp) {});
 					},
 					//修改技班状态
-					updateWorkcar() {
+					updateTeam() {
 						var team = {
-							id: this.Inststion1.inid,
+							id: this.Inststion1.tid,
 							type: "11"
-						}
-						console.log(team);
+						}						
 						axios.put(`http://127.0.0.1:8080/DZWWeb//ljy/api/TeamAction`, team).then(function(resp) {});
 					},
 					//修改维修单状态
 					updateInststion() {
-						var message="";
-						if(this.JGJY == "1"){
+						var message = "";						
+						if (this.JGJY == "1") {
 							this.Inststion1.statusid = 3;
-							messages="竣工成功!";
-						}		
-						else{
+							messages = "竣工成功!";
+							updateTeam();
+						} else {
 							this.Inststion1.statusid = 17;
-							messages="返工成功!";
+							messages = "返工成功!";
 							this.insertFangong();
-							if(this.wugongtype.wugongtypeid == "3"){
+							if (this.wugongtype.wugongtypeid == "3") {
+								//计算维修项目总金额
+								this.Wxxq1.forEach((item, i) => {
+									//Inststion.jyjg:救援价格改为维修项目金额总价
+									this.Inststion1.jyjg += parseFloat(item.column1);
+									item.inid = this.Inststion1.inid;
+								});
 								this.insertWxxq();
 							}
-						}
+						}						
 						let _this = this;
-						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion1).then(function(resp) {
+						axios.put(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion1).then(function(resp) {
 							if (resp.data.code == "200") {
 								_this.$message({
 									showClose: true,
@@ -363,7 +369,7 @@
 								_this.selectAllByCnoAndStatusid();
 							}
 						});
-						dialogVisible = false;
+						this.dialogVisible = false;
 					},
 					//维修详情删除事件
 					deleteWxxqs(index) {
@@ -373,7 +379,7 @@
 						});
 					},
 					//显示竣工检验模态框
-					shoowJGJY(Inststion) {
+					shoowJGJY(Inststion) {						
 						this.Inststion1 = Inststion;
 						this.dialogVisible = true;
 					},

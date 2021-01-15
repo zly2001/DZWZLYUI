@@ -390,6 +390,7 @@
 						let _this = this;
 						//计算维修项目总金额
 						this.Wxxqs.forEach((item, i) => {
+							//Inststion.jyjg:救援价格改为维修项目金额总价
 							this.Inststion.jyjg += parseFloat(item.column1);
 							item.inid = this.Inststion.inid;
 						});
@@ -484,6 +485,7 @@
 					},
 					//选择改变技班的工薪
 					changeMoney() {
+						//Inststion.itemsid该改为技班工薪
 						this.Inststion.itemsid = 0.0;
 						let _this = this;
 						this.team.artisan.forEach((item, i) => {
@@ -496,6 +498,7 @@
 					},
 					//选择改变救援车辆价格事件
 					changeCarMoney() {
+						//Workcardesc.column1该为救援价格
 						this.Inststion.workcarjlid = this.Workcar.wid;
 						this.Workcardesc = {
 							inid: this.Inststion.inid,
