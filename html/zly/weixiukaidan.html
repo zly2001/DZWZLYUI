@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>维修开单</title>
+		<style>
+			.text {
+				font-size: 14px;
+			}
+			
+			.clearfix:before,
+			.clearfix:after {
+				display: table;
+				content: "";
+			}
+			
+			.clearfix:after {
+				clear: both
+			}
+			
+			.box-card {
+				width: 100%;
+			}
+			
+			.el-table-column {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="weixiukaidan">
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<el-col :span="4">
+						维修开单
+						<el-button @click="showView('html/zly/zlyZNWX.html')" type="primary">站内维修</el-button>
+					</el-col>
+					<el-col :span="5" :offset="7">
+						<template>
+							<el-select v-model="statusid" value-key="statusid" placeholder="请选择维修单状态">
+								<el-option v-for="item in Status" :key="item.statusid" :label="item.statusname" :value="item.statusid">
+								</el-option>
+							</el-select>
+						</template>
+					</el-col>
+					<el-col :span="5">
+						<el-input v-model="cno" placeholder="请输入车牌号"></el-input>
+					</el-col>
+					<el-col :span="2" style="margin-left: 10px;">
+						<el-button @click="selectAllByCnoAndStatusid">搜索</el-button>
+					</el-col>
+				</div>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修单" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Inststion" @row-click="handdleInststion" stripe style="width: 100%">
+							<el-table-column prop="inid" label="维修单号" width="180">
+							</el-table-column>
+							<el-table-column prop="cno" label="车牌号" width="180">
+							</el-table-column>
+							<el-table-column prop="zrr" label="驾驶人" width="100">
+							</el-table-column>
+							<el-table-column prop="jcday" label="进厂日期" width="180">
+							</el-table-column>
+							<el-table-column prop="jdate" label="救援日期" width="180">
+							</el-table-column>
+							<el-table-column prop="workcardesc.wid" label="救援车辆" width="100">
+							</el-table-column>
+							<el-table-column prop="iszn == 1 ? 站内维修 : 站外维修" label="业务类型" width="100">
+							</el-table-column>
+							<el-table-column prop="iszn == 1 ? 站内维修 : 站外维修" label="维修状态" width="100">
+							</el-table-column>
+							<el-table-column prop="yjday" label="预计完工" width="180">
+							</el-table-column>
+							<el-table-column fixed="right" label="操作" width="150">
+								<template slot-scope="scope">
+									<el-button v-if="scope.row.statusid == 2" @click="updateInststion(scope.row,1)" type="primary">进厂</el-button>
+									<el-button v-if="scope.row.statusid == 1" @click="updateInststion(scope.row,18)" type="success">完成</el-button>
+									<el-button v-if="scope.row.statusid == 17" @click="updateInststion(scope.row,18)" type="success">返工完成</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+						<el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="pagesize" :total="Inststion.length" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+						</el-pagination>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修详情" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Wxxq" stripe style="width: 100%">
+							<el-table-column type="index" label="序号">
+							</el-table-column>
+							<el-table-column prop="xqname" label="项目名称">
+							</el-table-column>
+							<el-table-column prop="xqsl" label="数量">
+							</el-table-column>
+							<el-table-column prop="xmoney" label="单价">
+							</el-table-column>
+							<el-table-column prop="column1" label="总价">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+			</el-card>
+		</div>
+	</body>
+	<script>
+		var weixiukaidan = new Vue({
+			el: "#weixiukaidan",
+			data: {
+				isShow1: false,
+				isShow2: true,
+				activeName: "second",
+				activeName1: "first",
+				//  el-pagination 初始页
+				currentPage: 1,
+				//  el-pagination 每页的数据
+				pagesize: 5,
+				//车牌
+				cno: "",
+				//状态
+				statusid: "",
+				//状态
+				Status: [],
+				//维修单
+				Inststion: [],
+				//维修详情
+				Wxxq: [],
+				//救援记录
+				Workcardesc: {},
+			},
+			mounted() {
+				this.selectAllByType();
+				this.selectAllByCnoAndStatusid();
+			},
+			methods: {
+				//显示站内维修页面
+				showView(url) {
+						indexApp.showView(url);
+					},
+					// 张来遇写的根据状态类型查询不同的状态集合改了StatusMapper.xml文件
+					selectAllByType() {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/StatusAction/selectAllByType/1`).then(function(resp) {
+							_this.Status = resp.data;
+						});
+					},
+					//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+					selectAllByCnoAndStatusid() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
+							cno: _this.cno,
+							statusid: _this.statusid
+						}).then(function(resp) {
+							_this.Inststion = resp.data;
+						});
+					},
+					//修改维修单状态
+					updateInststion(Inststion, statusid) {
+						Inststion.statusid = statusid;
+						let _this = this;
+						axios.put(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, Inststion).then(function(resp) {
+							if (resp.data.code == "200") {
+								if (statusid == "1") {
+									_this.$message({
+										showClose: true,
+										message: '进厂成功!',
+										type: 'success'
+									});
+								} else {
+									_this.$message({
+										showClose: true,
+										message: '维修完成!',
+										type: 'success'
+									});
+								}
+								_this.selectAllByCnoAndStatusid();
+							}
+						});
+					},
+					handleSizeChange: function(size) {
+						this.pagesize = size;
+					},
+					handleCurrentChange: function(currentPage) {
+						this.currentPage = currentPage;
+					},
+					//表格双击改变详情方法
+					handdleInststion(row) {
+						this.Wxxq = row.wxxq;
+					}
+			}
+		});
+	</script>
+
+</html>
