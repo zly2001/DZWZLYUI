@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../css/index.css" />
+		<style type="text/css">
+			.el-row {
+    margin-bottom: 20px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .row-bg {
+    padding: 10px 0;
+    background-color: #f9fafc;
+  }
+  #biao{
+  	font-size: 30px;
+  	color: red;
+  	font-weight: bold;
+  }
+  .d{
+  	margin-right: 80px;
+  }
+  
+	</style>
+	</head>
+	<body>
+		<div id="yuan">
+			<el-row>
+				<el-col :span="4" :offset="2">
+					<span id="biao">员工管理</span>
+				</el-col>
+				<el-col :span="5" :offset="8">
+					<div>
+						<el-input  placeholder="请输入员工名称/支持模糊" v-model="ename" ></el-input>
+					</div>
+				</el-col>
+				<el-col :span="2" :offset="1">
+					<el-button type="warning" plain @click="selectByename()">搜索</el-button>
+				</el-col>
+				<el-col :span="2">
+					 <el-button type="info" plain>关闭</el-button>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="2" :offset="14">
+  					<el-button type="primary" plain icon="el-icon-circle-plus" @click="dialogFormVisible = true">增加</el-button>
+				</el-col>
+				<el-col :span="2" >
+  					<el-button type="primary" plain icon="el-icon-info" @click="dialogFormVisible1 = true">修改</el-button>
+				</el-col>
+				<el-col :span="2" >
+  					<el-button type="primary" plain icon="el-icon-error" @click="deleteEmployeeInfo(updateEmployee.employeeid)">删除</el-button>
+				</el-col>
+			</el-row>
+			<el-table :data="EmployeeData" @row-click="getDetails" highlight-current-row @current-change="handleCurrentChange" border style="width: 100%">
+				<el-table-column prop="dename" label="部门名称" >
+				</el-table-column>
+				<el-table-column prop="employeeid" label="员工工号" >
+				</el-table-column>
+				<el-table-column prop="ename" label="员工姓名">
+				</el-table-column>
+				<el-table-column prop="esex" label="性别">
+					 <template slot-scope="scope">{{ scope.row.esex === 1 ? '男' : '女' }}</template>
+				</el-table-column>
+				<el-table-column prop="positionname" label="岗位名称">
+				</el-table-column>
+				<el-table-column prop="etrytimes" label="入职日期">
+				</el-table-column>
+				<el-table-column prop="ecreid" label="身份证号">
+				</el-table-column>
+				<el-table-column prop="eaddress" label="地址">
+				</el-table-column>
+				<el-table-column prop="ephone" label="手机号">
+				</el-table-column>
+			</el-table>
+			<!-- 新增 -->
+			<el-dialog title="员工新增" :visible.sync="dialogFormVisible" width="30%">
+				<el-form ref="form"  label-width="80px" >
+					<el-form-item  label="员工姓名">
+						<el-input v-model="addEmployee.ename" placeholder="员工姓名"></el-input>
+					</el-form-item>
+					<el-form-item label="员工工号">
+						<el-input v-model="addEmployee.employeeid" placeholder="员工工号"></el-input>
+					</el-form-item>
+					<el-form-item label="性别">
+						<el-select v-model="addEmployee.esex" placeholder="性别">
+							<el-option label="男" value="1"></el-option>
+							<el-option label="女" value="2"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="身份证号">
+						<el-input v-model="addEmployee.ecreid" placeholder="身份证号"></el-input>
+					</el-form-item>
+					<el-form-item label="登录密码">
+						<el-input v-model="addEmployee.epwd" placeholder="登录密码" show-password></el-input>
+					</el-form-item>
+					<el-form-item label="地址">
+						<el-input v-model="addEmployee.eaddress" placeholder="地址"></el-input>
+					</el-form-item>
+					<el-form-item label="手机号">
+						<el-input v-model="addEmployee.ephone" placeholder="手机号"></el-input>
+					</el-form-item>
+					<el-form-item label="部门名称">
+						<el-select v-model="addEmployee.deid" placeholder="部门名称">
+							<el-option v-for="item in edepartment"
+      									:key="item.dename"
+      									:label="item.dename"
+      									:value="item.deid" >
+							</el-option>
+			
+						</el-select>
+					</el-form-item>
+					<el-form-item label="岗位名称">
+						<el-select v-model="addEmployee.positionid" placeholder="岗位名称">
+							<el-option v-for="item in eposition"
+      									:key="item.positionname"
+      									:label="item.positionname"
+      									:value="item.positionid">
+								
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="入职日期">
+						<el-date-picker type="date" placeholder="选择日期" v-model="addEmployee.etrytimes"  style="width: 100%;"></el-date-picker>
+					</el-form-item>
+					
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button class="d" @click="dialogFormVisible = false">取 消</el-button>
+					<el-button class="d" type="primary" @click="addEmployeeInfo">确 定</el-button>
+				</div>
+			</el-dialog>
+			<!-- 修改 -->
+			<el-dialog title="员工修改" :visible.sync="dialogFormVisible1" width="30%">
+				<el-form ref="form"  label-width="80px" >
+					<el-form-item  label="员工姓名">
+						<el-input v-model="updateEmployee.ename" placeholder="员工姓名"></el-input>
+					</el-form-item>
+					<el-form-item label="员工工号">
+						<el-input v-model="updateEmployee.employeeid" placeholder="员工工号"></el-input>
+					</el-form-item>
+					<el-form-item label="性别">
+						<el-select v-model="updateEmployee.esex" placeholder="性别">
+							<el-option label="男" value=1></el-option>
+							<el-option label="女" value=2></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="身份证号">
+						<el-input v-model="updateEmployee.ecreid" placeholder="身份证号"></el-input>
+					</el-form-item>
+					<el-form-item label="地址">
+						<el-input v-model="updateEmployee.eaddress" placeholder="地址"></el-input>
+					</el-form-item>
+					<el-form-item label="手机号">
+						<el-input v-model="updateEmployee.ephone" placeholder="手机号"></el-input>
+					</el-form-item>
+					<el-form-item label="部门名称">
+						<el-select v-model="updateEmployee.deid" placeholder="部门名称">
+							<el-option v-for="item in edepartment"
+      									:key="item.dename"
+      									:label="item.dename"
+      									:value="item.deid" >
+							</el-option>
+			
+						</el-select>
+					</el-form-item>
+					<el-form-item label="岗位名称">
+						<el-select v-model="updateEmployee.positionid" placeholder="岗位名称">
+							<el-option v-for="item in eposition"
+      									:key="item.positionname"
+      									:label="item.positionname"
+      									:value="item.positionid">
+								
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="入职日期">
+						<el-date-picker type="date" placeholder="选择日期" v-model="updateEmployee.etrytimes"  style="width: 100%;"></el-date-picker>
+					</el-form-item>
+					
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button class="d" @click="dialogFormVisible1 = false">取 消</el-button>
+					<el-button class="d" type="primary" @click="updateEmployeeInfo">确 定</el-button>
+				</div>
+			</el-dialog>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/jquery-1.12.4.js" ></script>
+	<script type="text/javascript" src="../js/vue.js"></script>
+	<script type="text/javascript" src="../js/axios.min.js"></script>
+	<script type="text/javascript" src="../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../js/index.js"></script>
+	<script>
+		var yuan = new Vue({
+			el:"#yuan",
+			data:{
+				ename:'',
+				formLabelWidth: '100px',
+				EmployeeData: [{}],
+				dialogFormVisible: false,
+				dialogFormVisible1: false,
+				addEmployee:{
+					ename:'',
+					epwd:'',
+					employeeid:'',
+					esex:"1",
+					ezuant:1,
+					ecreid:'',
+					eaddress:'',
+					ephone:'',
+					deid:1,
+					positionid:1,
+					etrytimes:''
+				},
+				edepartment:[{}],
+				eposition:[{}],
+				//删除修改用
+				updateEmployee:{
+					ename:'',
+					employeeid:'',
+					esex:"1",
+					ecreid:'',
+					eaddress:'',
+					ephone:'',
+					deid:1,
+					positionid:1,
+					etrytimes:''
+				}
+				
+			},
+			mounted() {
+				this.load();
+			},
+			methods: {
+				handleCurrentChange(val) {
+       				 this.currentRow = val;
+      			},
+      			load(){
+      				let _this = this;
+      				//员工表
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/queryOnline").then(function(resp) {
+						_this.EmployeeData = resp.data;
+						//console.log(_this.EmployeeData);
+					}).catch(function(e) {
+						console.info(e);
+					});
+					//下拉岗位表
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjPositionAction").then(function(resp) {
+						_this.eposition = resp.data;
+						//console.log(_this.eposition)
+					}).catch(function(e) {
+						console.info(e);
+					});
+					//下拉部门表
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjDepartmentAction").then(function(resp) {
+						_this.edepartment = resp.data;
+						//console.log(resp.data)
+					}).catch(function(e) {
+						console.info(e);
+					});
+					//console.log(_this.edepartment.deid);
+      			},
+      			getDetails(row){
+      				//alert(row);
+      				this.updateEmployee = row;
+      				this.updateEmployee.ezuant = 1;
+      			},
+      			addEmployeeInfo(){
+      				let _this = this;
+      				axios.post("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/insertEmployee",this.addEmployee).then(function(resp){
+						if(resp.data.code=="200"){
+							_this.$message({
+         						message: '新增成功',
+          						type: 'success'
+        						});
+        						_this.load();
+						}
+					}).catch(function(e){
+						console.log(e);
+					});
+      			},
+      			updateEmployeeInfo(){
+      				let _this = this;
+      				console.log(_this.updateEmployee)
+      				axios.put("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/updateEmployee",this.updateEmployee).then(function(resp){
+						if(resp.data.code=="200"){
+							_this.$message({
+         						message: '修改成功',
+          						type: 'success'
+        						});
+        						_this.load();
+						}
+					}).catch(function(e){
+						//console.log(e);
+					});
+      			},
+      			deleteEmployeeInfo(id){
+      				let _this = this;
+      				this.$confirm('删除该员工资料, 是否继续?', '提示', {
+          				confirmButtonText: '确定',
+          				cancelButtonText: '取消',
+          				type: 'warning'
+        				}).then(() => {
+        					axios.delete(`http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/deleteEmployee/${id}`).then(function(resp) {
+							if(resp.data.code == "200") {
+								_this.$message({
+            					type: 'success',
+            					message: '删除成功!'
+          						});
+          						_this.load();
+							}
+							})
+        				}).catch(() => {
+          					this.$message({
+            				type: 'info',
+            				message: '已取消删除'
+          				});          
+        			});
+      			},
+      			selectByename(){
+      				let _this = this;
+      				alert(this.ename);
+      				axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/select/"+this.ename).then(function(resp) {
+						_this.EmployeeData = resp.data;
+						//console.log(_this.EmployeeData);
+					}).catch(function(e) {
+						console.info(e);
+					});
+      			}
+    		}
+		});
+	</script>
+</html>

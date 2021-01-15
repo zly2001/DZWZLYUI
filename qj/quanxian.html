@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../css/index.css" />
+	</head>
+	<style type="text/css">
+			.el-row {
+				margin-bottom: 20px;
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+			
+			.el-col {
+				border-radius: 4px;
+			}
+			
+			.bg-purple-dark {
+				background: #99a9bf;
+			}
+			
+			.bg-purple {
+				background: #d3dce6;
+			}
+			
+			.bg-purple-light {
+				background: #e5e9f2;
+			}
+			
+			.grid-content {
+				border-radius: 4px;
+				min-height: 36px;
+			}
+			
+			.row-bg {
+				padding: 10px 0;
+				background-color: #f9fafc;
+			}
+			
+			#biao {
+				font-size: 30px;
+				color: red;
+				
+			}
+			.d{
+				margin-left: 260px;
+			}
+		</style>
+	<body>
+		<div id="quan">
+			<el-row>
+				<el-col :span="4" :offset="2">
+					<span id="biao">岗位权限设置</span>
+				</el-col>
+				<el-col :span="4">
+					<el-select  placeholder="岗位名称" v-model="positionId">
+						<el-option v-for="item in eposition"
+      									:key="item.positionname"
+      									:label="item.positionname"
+      									:value="item.positionid">
+						</el-option>
+					</el-select>
+				</el-col>
+				<el-col :span="4" :offset="10">
+					 <el-button type="primary">保存</el-button>
+					 <el-button type="info" plain>关闭</el-button>
+				</el-col>
+			</el-row>
+			<!--
+            	作者：offline
+            	时间：2021-01-15
+            	描述：员工资料
+            -->
+			<el-row>
+				<el-col>
+					<el-checkbox label="1.行政人事"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="*员工资料"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="2">
+					<el-checkbox label="①员工管理"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="②职位定义"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="③离职管理"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="④通讯名录"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="*技工管理"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="2">
+					<el-checkbox label="①技工星级"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="②班组技工"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="③外勤车辆"></el-checkbox>
+				</el-col>
+			</el-row>
+			<!--
+            	作者：offline
+            	时间：2021-01-15
+            	描述：基础数据
+            -->
+			<el-row>
+				<el-col>
+					<el-checkbox label="2.基础数据"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="①发动机品牌"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="②车型档案"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="③维修项目"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="④供货单位"></el-checkbox>
+				</el-col>
+			</el-row>
+			<!--
+            	作者：offline
+            	时间：2021-01-15
+            	描述：结算中心
+            -->
+			<el-row>
+				<el-col>
+					<el-checkbox label="3.结算中心"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="①前台结算"></el-checkbox>
+				</el-col>
+			</el-row>
+			
+			<!--
+            	作者：offline
+            	时间：2021-01-15
+            	描述：
+            -->
+            <el-row>
+				<el-col>
+					<el-checkbox label="4.客户档案"></el-checkbox>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="①客户资料"></el-checkbox>
+				</el-col>
+				<el-col :span="4" :offset="1">
+					<el-checkbox label="①车辆资料"></el-checkbox>
+				</el-col>
+			</el-row>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/jquery-1.12.4.js" ></script>
+	<script type="text/javascript" src="../js/vue.js"></script>
+	<script type="text/javascript" src="../js/axios.min.js"></script>
+	<script type="text/javascript" src="../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../js/index.js"></script>
+	<script>
+		var quan = new Vue({
+			el:"#quan",
+			data:{
+				eposition:[{}],
+				positionId:1,
+			},
+			mounted() {
+				this.load();
+			},
+			methods:{
+				load(){
+					let _this = this;
+					//下拉岗位表
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjPositionAction").then(function(resp) {
+						_this.eposition = resp.data;
+						console.log(_this.eposition)
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+			},
+		})
+	</script>
+</html>

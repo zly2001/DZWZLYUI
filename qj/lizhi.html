@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="../css/index.css" />
+		<style type="text/css">
+			.el-row {
+				margin-bottom: 20px;
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+			
+			.el-col {
+				border-radius: 4px;
+			}
+			
+			.bg-purple-dark {
+				background: #99a9bf;
+			}
+			
+			.bg-purple {
+				background: #d3dce6;
+			}
+			
+			.bg-purple-light {
+				background: #e5e9f2;
+			}
+			
+			.grid-content {
+				border-radius: 4px;
+				min-height: 36px;
+			}
+			
+			.row-bg {
+				padding: 10px 0;
+				background-color: #f9fafc;
+			}
+			
+			#biao {
+				font-size: 30px;
+				color: red;
+				font-weight: bold;
+			}
+			.d{
+				margin-left: 260px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="lizhi">
+			<el-row>
+				<el-col :span="4" :offset="2">
+					<span id="biao">离职管理</span>
+				</el-col>
+				<el-col :span="2" :offset="16">
+					 <el-button type="info" plain>关闭</el-button>
+				</el-col>
+			</el-row>
+			<el-row>
+				<el-col :span="6" :offset="18">
+  					<div>
+  						 <el-button type="primary" plain @click="dialogTableVisible = true">离职</el-button>
+  						 <el-button type="primary" plain @click="deleteEmployeeInfo(this.deleteid)">删除</el-button>
+  					</div>
+  				</el-col>
+			</el-row>
+			<el-table :data="LizhiEmployeeData" @row-click="getDetails1" highlight-current-row @current-change="handleCurrentChange1"  border style="width: 100%">
+				<el-table-column prop="dename" label="部门名称" >
+				</el-table-column>
+				<el-table-column prop="employeeid" label="员工工号" >
+				</el-table-column>
+				<el-table-column prop="ename" label="员工姓名">
+				</el-table-column>
+				<el-table-column prop="esex" label="性别">
+					 <template slot-scope="scope">{{ scope.row.esex === 1 ? '男' : '女' }}</template>
+				</el-table-column>
+				<el-table-column prop="positionname" label="岗位名称">
+				</el-table-column>
+				<el-table-column prop="elaimes" label="离职日期">
+				</el-table-column>
+				<el-table-column prop="eyunayin" label="离职原因">
+				</el-table-column>
+			</el-table>
+			
+			<el-dialog title="在职员工" :visible.sync="dialogTableVisible" width="40%">
+				<span style="color: red; font-weight:bold ">离职原因：</span><el-input placeholder="离职原因" v-model="updateEmployee.eyunayin" style="width: 50%;"></el-input><br>
+				<span style="color: red; font-weight:bold ">离职日期：</span><el-date-picker type="date" v-model="updateEmployee.elaimes" placeholder="离职日期"   style="width: 50%;"></el-date-picker>
+				<el-table :data="EmployeeData" @row-click="getDetails" highlight-current-row @current-change="handleCurrentChange">
+					<el-table-column property="employeeid" label="员工工号" ></el-table-column>
+					<el-table-column property="ename" label="员工姓名" ></el-table-column>
+					<el-table-column property="etrytimes" label="入职日期" ></el-table-column>
+				</el-table>
+				<el-button class="d" @click="dialogTableVisible = false">取 消</el-button>
+				<el-button class="d" type="primary" @click="updateEmployeeInfo">确 定</el-button>
+			</el-dialog>
+		</div>
+	</body>
+	<script type="text/javascript" src="../js/jquery-1.12.4.js" ></script>
+	<script type="text/javascript" src="../js/vue.js"></script>
+	<script type="text/javascript" src="../js/axios.min.js"></script>
+	<script type="text/javascript" src="../js/axios_cfg.js"></script>
+	<script type="text/javascript" src="../js/index.js"></script>
+	<script>
+		var lizhi = new Vue({
+			el:"#lizhi",
+			data:{
+				LizhiEmployeeData: [{}],
+				EmployeeData: [{}],
+        		dialogTableVisible: false,
+        		updateEmployee:{
+        			eyunayin:'',
+        			elaimes:'',
+        		},
+        		deleteid:'',
+			},
+			mounted() {
+				this.load();
+			},
+			methods: {
+				handleCurrentChange(val) {
+       				 this.currentRow = val;
+      			},
+      			handleCurrentChange1(val) {
+       				 this.currentRow = val;
+      			},
+      			getDetails(row){
+      				//alert(row.employeeid);
+      				let _this = this;
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/selectEmployee/"+row.employeeid).then(function(resp) {
+						_this.updateEmployee = resp.data;
+						_this.updateEmployee.ezuant = 0;
+						//console.log(_this.LizhiEmployeeData);
+					}).catch(function(e) {
+						console.info(e);
+					});
+      			},
+      			
+      			getDetails1(row){
+      				this.deleteid = row.employeeid;
+      			},
+				load(){
+					let _this = this;
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/selectLizhi").then(function(resp) {
+						_this.LizhiEmployeeData = resp.data;
+						//console.log(_this.LizhiEmployeeData);
+					}).catch(function(e) {
+						console.info(e);
+					});
+					
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/queryOnline").then(function(resp) {
+						_this.EmployeeData = resp.data;
+						//console.log(_this.EmployeeData);
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+				updateEmployeeInfo(){
+					let _this = this;
+      				//console.log(_this.updateEmployee)
+      				axios.put("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/updateEmployee",this.updateEmployee).then(function(resp){
+						if(resp.data.code=="200"){
+							_this.$message({
+         						message: '修改成功',
+          						type: 'success'
+        						});
+        						_this.load();
+						}
+					}).catch(function(e){
+						console.log(e);
+					});
+				},
+				deleteEmployeeInfo(){
+					let _this = this;
+      				this.$confirm('删除该员工资料, 是否继续?', '提示', {
+          				confirmButtonText: '确定',
+          				cancelButtonText: '取消',
+          				type: 'warning'
+        				}).then(() => {
+        					axios.delete(`http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/deleteEmployee/${id}`).then(function(resp) {
+							if(resp.data.code == "200") {
+								_this.$message({
+            					type: 'success',
+            					message: '删除成功!'
+          						});
+          						_this.load();
+							}
+							})
+        				}).catch(() => {
+          					this.$message({
+            				type: 'info',
+            				message: '已取消删除'
+          				});          
+        			});
+				}
+			},
+		})
+	</script>
+</html>
