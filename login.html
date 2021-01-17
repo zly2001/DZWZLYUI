@@ -46,7 +46,7 @@
 						<el-col :xs="24" :sm="20" :md="12" :offset="10">
 							<el-form-item label="密码" prop="epwd">
 								<el-col :span="6">
-									<el-input v-model="Employee.epwd" placeholder="请输入密码"></el-input>
+									<el-input v-model="Employee.epwd" type="password" placeholder="请输入密码"></el-input>
 								</el-col>
 							</el-form-item>
 						</el-col>
@@ -76,8 +76,9 @@
 			methods: {
 				selectByLogin() {
 					let _this = this;
-					axios.post(`http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction`, this.Employee).then(function(resp) {
-						if (resp.data.code == "200") {
+					axios.post(`http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction`, this.Employee).then(function(resp) {										
+						if (resp.data != "") {
+							sessionStorage.setItem('Employee', resp.data); // 存入一个值
 							document.location = "index.html";
 						} else {
 							_this.$message.error('登录失败!');

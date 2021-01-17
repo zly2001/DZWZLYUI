@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+	<body>
+		<h3>用户</h3>
+		<div id="app1">
+			<el-form :model="AddUser" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+				<div>
+					<el-input placeholder="请输入客户编号" v-model="AddUser.clino">
+						<template slot="prepend">*客户编号</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入客户名称" v-model="AddUser.cliname">
+						<template slot="prepend">*客户名称</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入手机号码" v-model="AddUser.cliphone">
+						<template slot="prepend">*手机号码</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入用户地址" v-model="AddUser.cliaddress">
+						<template slot="prepend">*用户地址</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入接待人员" v-model="AddUser.employeeid">
+						<template slot="prepend">*接待人员</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入用户级别" v-model="AddUser.mid">
+						<template slot="prepend">*用户级别</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入注册地址" v-model="AddUser.sfz">
+						<template slot="prepend">*注册地址</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入用户备注" v-model="AddUser.khbz">
+						<template>*用户备注</template>
+					</el-input>
+
+				</div>
+
+				<el-button type="primary" @click="cancel()">取消</el-button>
+				<el-button type="primary" @click="ensure()">确定</el-button>
+			</el-form>
+		</div>
+
+	</body>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var app2=new Vue({
+			el:"#app",
+			
+		});
+		
+	</script>	
+		< /html>

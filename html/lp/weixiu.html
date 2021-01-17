@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	
+	</head>
+
+	<body>
+		<div id="app">
+			<h2>维修项目</h2> 维修项目名称:&nbsp;
+			<el-input v-model="input" style="width:200px" placeholder="请输入内容"></el-input>&nbsp;&nbsp;&nbsp;
+			<el-button icon="el-icon-search" circle @click="gotoPage(1)"></el-button>
+			&nbsp;&nbsp;
+			<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+			<el-dialog title="新增维修项目" :visible.sync="dialogFormVisible">
+				<el-form :model="Items">
+					<el-form-item label="维修项目名称" :label-width="formLabelWidth">
+						<el-input v-model="Items.itemsname" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="维修项目价格" :label-width="formLabelWidth">
+						<el-input v-model="Items.itemsprice" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="维修型号" :label-width="formLabelWidth">
+						<template>
+							<el-select v-model="value" placeholder="请选择" style="width: 100%;">
+								<el-option v-for="item in options" :key="item.brandid" :label="item.brandname" :value="item.brandid">
+								</el-option>
+							</el-select>
+						</template>
+					</el-form-item>
+					<el-form-item label="维修项目时间" :label-width="formLabelWidth">
+						<el-input v-model="Items.itemstime" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="供货商" :label-width="formLabelWidth">
+						<template>
+							<el-select v-model="value2" placeholder="请选择" style="width: 100%;">
+								<el-option v-for="item in options2" :key="item.firmid" :label="item.firmname" :value="item.firmid">
+								</el-option>
+							</el-select>
+						</template>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="dialogFormVisible=false">取 消</el-button>
+					<el-button type="primary" @click="xzFrim()">确 定</el-button>
+				</div>
+			</el-dialog>
+
+			<br /><br />
+			<template>
+				<el-table :data="tableData" style="width:82%" border>
+					<el-table-column label="序号" width="50px">
+						<template slot-scope="temp">
+							{{temp.$index+1}}
+						</template>
+					</el-table-column>
+					<el-table-column prop="itemsname" label="维修项目名称" width="150px">
+					</el-table-column>
+					<el-table-column prop="itemsprice" label="维修项目价格" width="202px">
+					</el-table-column>
+					<el-table-column prop="brandname" label="维修型号" width="202px">
+					</el-table-column>
+					<el-table-column prop="itemstime" label="维修项目时间" width="150px">
+					</el-table-column>
+					<el-table-column prop="firmname" label="供货商名称" width="150px">
+					</el-table-column>
+					<el-table-column label="编辑" width="130px">
+						<template slot-scope="temp">
+							<el-button type="primary" icon="el-icon-edit" circle @click="xgFirm(temp.row)"></el-button>
+							<el-button type="danger" icon="el-icon-delete" @click="delRow()" circle></el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</template>
+			<footer v-show="info.list!=''" style="text-align: center;">
+				<br>
+				<el-button type="primary" @click="gotoPage(1)">首页</el-button>
+				<el-button type="primary" @click="shangyy(info.prePage)">上一页</el-button>
+				<el-button type="primary" @click="xiayy(info.nextPage)">下一页</el-button>
+				<el-button type="primary" @click="gotoPage(info.lastPage)">尾页</el-button>
+			</footer>
+		</div>
+	</body>
+	
+	<script type="text/javascript">
+		var app = new Vue({
+			data: {
+				bh: "",
+				name: "",
+				info: [],
+				input: "",
+				dialogFormVisible: false,
+				tableData: [],
+				formLabelWidth: '120px',
+				Items: {
+					itemsid: 0,
+					itemstypeid: null,
+					itemsname: "",
+					itemsprice: "",
+					itemsxh: "",
+					itemstime: "",
+					column1: "",
+					column2: "",
+					column3: "",
+					column4: "",
+
+				},
+				options: [],
+				value: '',
+				options2: [],
+				value2: '',
+
+			},
+			methods: {
+				gotoPage(page) {
+					let _this = this;
+					var bh = _this.input == "" ? "-1" : _this.input;
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll4/${page}/${bh}`).then(function(resp) {
+						_this.tableData = resp.data.list;
+						_this.info = resp.data;
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+				xzFrim() {
+					let _this = this;
+					_this.Items.itemsxh = _this.value;
+					_this.Items.column1 = _this.value2;
+					axios.post(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addItems`, _this.Items).then(function(resp) {
+						_this.gotoPage(1);
+					}).catch(function(e) {
+						console.info(e);
+					});
+					this.$message({
+						type: 'success',
+						message: '新增成功!',
+					});
+					_this.dialogFormVisible = false;
+				},
+				shangyy(page) {
+					let _this = this;
+					if(_this.info.hasPreviousPage == false) {
+						this.$message({
+							message: '当前是第一页哦',
+							type: 'warning'
+						});
+					} else {
+						this.gotoPage(page);
+					}
+				},
+				xiayy(page) {
+					let _this = this;
+					if(_this.info.hasNextPage == false) {
+						this.$message({
+							message: '当前是最后一页哦',
+							type: 'warning'
+						});
+					} else {
+						this.gotoPage(page);
+					}
+				},
+				cx() {
+					let _this = this;
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll5`).then(function(resp) {
+						_this.options = resp.data;
+					}).catch(function(e) {
+						console.info(e);
+					});
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll6`).then(function(resp) {
+						_this.options2 = resp.data;
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+
+			},
+			mounted() {
+				this.gotoPage(1);
+				this.cx();
+			}
+		}).$mount("#app")
+	</script>
+
+</html>

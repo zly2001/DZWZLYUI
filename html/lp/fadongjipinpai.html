@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		
+		<style type="text/css">
+
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<h2>发动机品牌</h2> 发动机品牌编号:&nbsp;
+			<el-input v-model="input" style="width:200px" placeholder="请输入内容"></el-input>&nbsp;&nbsp;发动机品牌名称:&nbsp;
+			<el-input v-model="input2" style="width:200px" placeholder="请输入内容"></el-input>&nbsp;&nbsp;
+			<el-button icon="el-icon-search" circle @click="gotoPage(1)"></el-button>
+			&nbsp;&nbsp;
+			<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+			<el-dialog title="新增品牌发动机" :visible.sync="dialogFormVisible">
+				<el-form :model="form">
+					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+						<el-input v-model="name2" autocomplete="off"></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="dialogFormVisible=false">取 消</el-button>
+					<el-button type="primary" @click="xzEngine()">确 定</el-button>
+				</div>
+			</el-dialog>
+
+			<br /><br />
+			<template>
+				<el-table :data="tableData" style="width:781px" border>
+					<el-table-column label="序号" width="50px">
+						<template slot-scope="temp">
+							{{temp.$index+1}}
+						</template>
+					</el-table-column>
+					<el-table-column prop="goodid" label="发动机品牌编号" width="300px">
+					</el-table-column>
+					<el-table-column prop="goodname" label="发动机品牌名称" width="300px">
+					</el-table-column>
+					<el-table-column label="编辑" width="130px">
+						<template slot-scope="temp">
+							<el-button type="primary" icon="el-icon-edit" circle @click="xgEngine(temp.row.goodid,temp.row.goodname)"></el-button>
+							<el-button type="danger" icon="el-icon-delete" @click="delRow(temp.$index,temp.row.goodid)" circle></el-button>
+						</template>
+					</el-table-column>
+				</el-table>
+			</template>
+
+			<el-dialog title="修改品牌发动机" :visible.sync="dialogFormVisible2">
+				<el-form :model="form">
+					<el-form-item label="发动机品牌编号" :label-width="formLabelWidth">
+						<el-input v-model="bh" autocomplete="off" :disabled="true"></el-input>
+					</el-form-item>
+					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+						<el-input v-model="name" autocomplete="off"></el-input>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer">
+					<el-button @click="dialogFormVisible2=false">取 消</el-button>
+					<el-button type="primary" @click="xgEngine2()">确 定</el-button>
+				</div>
+			</el-dialog>
+
+			<footer v-show="info.list!=''">
+				<br>
+				<el-button type="primary" @click="gotoPage(1)">首页</el-button>
+				<el-button type="primary" @click="shangyy(info.prePage)">上一页</el-button>
+				<el-button type="primary" @click="xiayy(info.nextPage)">下一页</el-button>
+				<el-button type="primary" @click="gotoPage(info.lastPage)">尾页</el-button>
+			</footer>
+
+		</div>
+	</body>
+	
+	<!-- vue框架 -->
+	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+	<!--组件库-->
+	<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		var app = new Vue({
+			data: {
+				bh: "",
+				name: "",
+				name2: "",
+				info: [],
+				input: "",
+				input2: "",
+				dialogFormVisible: false,
+				dialogFormVisible2: false,
+				tableData: [],
+				formLabelWidth: '120px'
+			},
+			methods: {
+				gotoPage(page) {
+					let _this = this;
+					var bh = _this.input == "" ? "-1" : _this.input;
+					var name = _this.input2 == "" ? "-1" : _this.input2;
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll/${page}/${bh}/${name}`).then(function(resp) {
+						_this.tableData = resp.data.list;
+						_this.info = resp.data;
+
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+				xzEngine() {
+					let _this = this;
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addEngine/${_this.name2}`).then(function(resp) {
+
+					}).catch(function(e) {
+						console.info(e);
+					});
+					this.$message({
+						type: 'success',
+						message: '新增成功!',
+					});
+					_this.name2 = "";
+					_this.dialogFormVisible = false;
+				},
+				xgEngine(bh, name) {
+					let _this = this;
+					_this.bh = bh;
+					_this.name = name;
+					_this.dialogFormVisible2 = true;
+				},
+				xgEngine2() {
+					let _this = this;
+					if(_this.name == "") {
+						this.$message({
+							message: '请填写发动机品牌名称',
+							type: 'warning'
+						});
+					} else {
+						axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/updateEngine/${_this.bh}/${_this.name}`).then(function(resp) {
+							_this.gotoPage(1);
+						}).catch(function(e) {
+							console.info(e);
+						});
+						this.$message({
+							type: 'success',
+							message: '修改成功!',
+						});
+						_this.dialogFormVisible2 = false;
+					}
+
+				},
+				delRow(index, bh) {
+					this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+					}).then(() => {
+						axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/removeEngine/${bh}`).then(function(resp) {
+							this.gotoPage(1);
+
+						}).catch(function(e) {
+							console.info(e);
+						});
+						this.tableData.splice(index, 1);
+						this.$message({
+							type: 'success',
+							message: '删除成功!',
+						});
+					}).catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消删除'
+						});
+					});
+				},
+
+				shangyy(page) {
+					let _this = this;
+					if(_this.info.hasPreviousPage == false) {
+						this.$message({
+							message: '当前是第一页哦',
+							type: 'warning'
+						});
+					} else {
+						this.gotoPage(page);
+					}
+				},
+				xiayy(page) {
+					let _this = this;
+					if(_this.info.hasNextPage == false) {
+						this.$message({
+							message: '当前是最后一页哦',
+							type: 'warning'
+						});
+					} else {
+						this.gotoPage(page);
+					}
+				}
+
+			},
+			mounted() {
+				this.gotoPage(1);
+			}
+		}).$mount("#app")
+	</script>
+
+</html>

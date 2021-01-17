@@ -35,17 +35,20 @@
 				</el-header>
 				<el-container>
 					<el-aside width="200px">
-						<el-menu>
-							<el-submenu index="1">
+						<el-menu v-for="(temp,i) in treeNodes">
+							<el-submenu index="i">
 								<template slot="title">
-									<i class="el-icon-goods"></i>
-									<span>商品管理</span>
+									<i class="el-icon-phone-outline"></i>
+									<span>{{temp.text}}</span>
 								</template>
-								<el-menu-item-group>
-									<el-menu-item index="1-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>供货单位</el-menu-item>
-									<el-menu-item index="1-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>维修项目</el-menu-item>
+								<el-menu-item-group v-for="(children,j) in temp.children">
+									<el-menu-item index="${i}" @click="linkPage(children.id)"><i class="el-icon-eleme"></i>{{children.text}}</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
+						</el-menu>
+					</el-aside>
+					<!--<el-aside width="200px">
+						<el-menu>
 							<el-submenu index="2">
 								<template slot="title">
 									<i class="el-icon-phone-outline"></i>
@@ -63,8 +66,10 @@
 									<span>数据管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="3-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>发动机品牌</el-menu-item>
-									<el-menu-item index="3-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>车型档案</el-menu-item>
+									<el-menu-item index="3-1" @click="showView('html/lp/fadongjipinpai.html')"><i class="el-icon-eleme"></i>发动机品牌</el-menu-item>
+									<el-menu-item index="3-2" @click="showView('html/lp/chexingdangan.html')"><i class="el-icon-eleme"></i>车型档案</el-menu-item>
+									<el-menu-item index="3-3" @click="showView('add.html')"><i class="el-icon-eleme"></i>供货单位</el-menu-item>
+									<el-menu-item index="3-4" @click="showView('person.html')"><i class="el-icon-eleme"></i>维修项目</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
 							<el-submenu index="4">
@@ -109,14 +114,14 @@
 									<span>职工管理</span>
 								</template>
 								<el-menu-item-group>
-									<el-menu-item index="7-1" @click="showView('add.html')"><i class="el-icon-eleme"></i>职工列表</el-menu-item>
-									<el-menu-item index="7-2" @click="showView('person.html')"><i class="el-icon-eleme"></i>离职登记</el-menu-item>
-									<el-menu-item index="7-3" @click="showView('person.html')"><i class="el-icon-eleme"></i>通讯目录</el-menu-item>
+									<el-menu-item index="7-1" @click="showView('qj/employee.html')"><i class="el-icon-eleme"></i>职工列表</el-menu-item>
+									<el-menu-item index="7-2" @click="showView('qj/lizhi.html')"><i class="el-icon-eleme"></i>离职登记</el-menu-item>
+									<el-menu-item index="7-3" @click="showView('qj/tongxun.html')"><i class="el-icon-eleme"></i>通讯目录</el-menu-item>
 									<el-menu-item index="7-4" @click="showView('qj/position.html')"><i class="el-icon-eleme"></i>岗位定义</el-menu-item>
 								</el-menu-item-group>
 							</el-submenu>
 						</el-menu>
-					</el-aside>
+					</el-aside>-->
 					<el-main>
 						<!--异步加载页面内容层-->
 						<div id="cnt"></div>
@@ -131,21 +136,40 @@
 	<script type="text/javascript" src="js/vue.js"></script>
 	<script type="text/javascript" src="js/axios.min.js"></script>
 	<script type="text/javascript" src="js/axios_cfg.js"></script>
-	<script type="text/javascript" src="js/index.js"></script>	
+
+	<script type="text/javascript" src="js/index.js"></script>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2&ak=1cobfYLh6Gj1v28GQwBAX0Uqm1OdGbO1"></script>
-		<script src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+	<script src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+
+	<script type="text/javascript" src="js/index.js"></script>
+	<script src="js/menu_const.js"></script>
+	<script src="js/view_filter.js"></script>
+
 	<script>
 		var indexApp = new Vue({
 			data: {
-				isShow: false
+				isShow: false,
+				treeNodes: [],
+				x: "-"
 			},
 			methods: {
+				//传路径显示页面
 				showView(url) {
-					$("#cnt").load(url);
-				}
+						$("#cnt").load(url);
+					},
+					//传code显示页面
+					linkPage(code) {
+						$("#cnt").load(menuMapping[code]); //ajax加载页面
+					}
 			},
 			mounted() {
 				this.showView('work.html');
+				let _this = this;
+				axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjEmployeeAction/getFunTree").then(function(resp) {
+					_this.treeNodes = resp.data
+				}).catch(function(e) {
+					console.info(e);
+				});
 			}
 		}).$mount('#indxApp');
 	</script>

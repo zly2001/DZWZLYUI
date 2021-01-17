@@ -48,7 +48,7 @@
 				</div>
 				<el-row>
 					<el-col :span="10" style="margin-left: 10px;">
-						<el-form ref="form" :rules="rules" :model="Inststion" label-width="80px" size="mini">
+						<el-form :model="Inststion" :rules="rules" ref="Inststion" :model="Inststion" label-width="80px" size="mini">
 							<el-row>
 								<el-col :span="12">
 									<el-form-item label="维修编号">
@@ -57,7 +57,7 @@
 								</el-col>
 								<el-col :span="12">
 									<el-form-item label="车牌号" prop="cno">
-										<el-input v-model="Inststion.cno"></el-input>
+										<el-input @blur="selectClientcarByCno" v-model="Inststion.cno"></el-input>
 									</el-form-item>
 								</el-col>
 							</el-row>
@@ -118,7 +118,7 @@
 							</el-form-item>
 							<el-form-item size="large">
 								<el-button type="success" @click="dialogVisible = true">添加维修项</el-button>
-								<el-button type="primary" @click="getProjectNum">立即创建</el-button>
+								<el-button type="primary" @click="getProjectNum('Inststion')">立即创建</el-button>
 								<el-button>取消</el-button>
 							</el-form-item>
 						</el-form>
@@ -296,7 +296,9 @@
 				Items1: [],
 				//维修详情
 				Wxxqs: [],
-				messages: []
+				messages: [],
+				//判断维修单是否能新增
+				InststionIsTrue: true
 			},
 			mounted() {
 				//百度地图
@@ -309,7 +311,7 @@
 				this.localSearch = new BMap.LocalSearch(this.map);
 				//查询所有空闲中且班组里技工人数大于0的班组
 				let _this = this;
-				axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction/selectAll`).then(function(resp) {
+				axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction/selectAllByType/11`).then(function(resp) {
 					_this.Team = resp.data;
 				});
 				//查询所有空闲中的救援车辆				
@@ -358,25 +360,39 @@
 						_this.localSearch.search(keyword);
 					},
 					// 获取当前日期的方法
-					getProjectNum() {
-						const projectTime = new Date() // 当前中国标准时间
-						const Year = projectTime.getFullYear() // 获取当前年份 支持IE和火狐浏览器.
-						const Month = projectTime.getMonth() + 1 // 获取中国区月份
-						const Day = projectTime.getDate() // 获取几号
-						var CurrentDate = Year
-						if (Month >= 10) { // 判断月份和几号是否大于10或者小于10
-							CurrentDate += Month
-						} else {
-							CurrentDate += '0' + Month
-						}
-						if (Day >= 10) {
-							CurrentDate += Day
-						} else {
-							CurrentDate += '0' + Day
-						}
-						// 调用获取当前日期的方法加四位随机数  赋值表单中的项目编号 如果是6位或者8位随机数，相应的 *1000000或者 *100000000就行了						
-						this.Inststion.inid = Math.floor(CurrentDate + Math.random() * 10000);
-						this.insertInststion();
+					getProjectNum(Inststion) {
+						this.$refs[Inststion].validate((valid) => {
+							if (valid) {
+								if (this.InststionIsTrue == true) {
+									const projectTime = new Date() // 当前中国标准时间
+									const Year = projectTime.getFullYear() // 获取当前年份 支持IE和火狐浏览器.
+									const Month = projectTime.getMonth() + 1 // 获取中国区月份
+									const Day = projectTime.getDate() // 获取几号
+									var CurrentDate = Year
+									if (Month >= 10) { // 判断月份和几号是否大于10或者小于10
+										CurrentDate += Month
+									} else {
+										CurrentDate += '0' + Month
+									}
+									if (Day >= 10) {
+										CurrentDate += Day
+									} else {
+										CurrentDate += '0' + Day
+									}
+									// 调用获取当前日期的方法加四位随机数  赋值表单中的项目编号 如果是6位或者8位随机数，相应的 *1000000或者 *100000000就行了						
+									this.Inststion.inid = Math.floor(CurrentDate + Math.random() * 10000);
+									this.insertInststion();
+								} else {
+									this.$message({
+										showClose: true,
+										message: '车辆正处于业务状态或不存在不能新增业务!',
+										type: 'error'
+									});
+								}
+							} else {
+								return false;
+							}
+						});
 					},
 					//查询所有维修项目类型
 					selectAllByItemstype() {
@@ -397,7 +413,7 @@
 						this.Inststion.statusid = this.Inststion.iszn;
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion).then(function(resp) {
 							if (resp.data.code == "200") {
-								if (_this.Wxxqs[0] != null) {								
+								if (_this.Wxxqs[0] != null) {
 									_this.insertWxxq();
 								}
 								if (_this.Inststion.iszn == "2") {
@@ -420,6 +436,32 @@
 							}
 						});
 					},
+					//查询车辆是否存在并是否处于可接车维修状态
+					selectClientcarByCno() {
+						let _this = this;
+						if (this.Inststion.cno !== "") {
+							axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/selectClientcarByCno/${this.Inststion.cno}`).then(function(resp) {	
+								var Clientcar = resp.data;								
+								if (Clientcar.column1 == null) {
+									_this.$message({
+										showClose: true,
+										message: '车辆不存在!',
+										type: 'error'
+									});
+									_this.InststionIsTrue = false;
+								} else if (Clientcar.column1 != "24" || Clientcar.column1 == "25") {
+									_this.$message({
+										showClose: true,
+										message: '车辆正处于业务状态不能新增业务!',
+										type: 'error'
+									});
+									_this.InststionIsTrue = false;
+								} else {
+									_this.InststionIsTrue = true;
+								}
+							});
+						}
+					},
 					//新增维修详情
 					insertWxxq() {
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WxxqAction`, this.Wxxqs).then(function(resp) {});
@@ -428,12 +470,17 @@
 					insertWorkcardesc() {
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcardescAction`, this.Workcardesc).then(function(resp) {});
 					},
-					//修改救援车辆与技班状态
+					//修改救援车辆与技班,车辆状态状态
 					updateWorkcar() {
 						this.Workcar.statusid = 14;
 						this.team.type = 12;
+						var Clientcar = {
+							cno: this.Inststion.cno,
+							column1: this.Inststion.iszn == 1 ? 19 : 20
+						}
 						axios.put(`http://127.0.0.1:8080/DZWWeb/zly/api/WorkcarAction`, this.Workcar).then(function(resp) {});
-						axios.put(`http://127.0.0.1:8080/DZWWeb//ljy/api/TeamAction`, this.team).then(function(resp) {});
+						axios.put(`http://127.0.0.1:8080/DZWWeb/ljy/api/TeamAction`, this.team).then(function(resp) {});
+						axios.put(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/update`, Clientcar).then(function(resp) {});
 					},
 					//关闭模态框
 					handleClose(done) {
@@ -485,6 +532,7 @@
 					},
 					//选择改变技班的工薪
 					changeMoney() {
+						this.Inststion.tid = this.team.tid;
 						//Inststion.itemsid该改为技班工薪
 						this.Inststion.itemsid = 0.0;
 						let _this = this;
