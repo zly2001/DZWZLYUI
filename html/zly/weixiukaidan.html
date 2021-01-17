@@ -164,7 +164,8 @@
 						let _this = this;
 						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
 							cno: _this.cno,
-							statusid: _this.statusid
+							statusid: _this.statusid,
+							type: 1
 						}).then(function(resp) {
 							_this.Inststion = resp.data;
 						});
