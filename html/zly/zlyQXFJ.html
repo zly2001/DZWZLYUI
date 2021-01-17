@@ -88,6 +88,7 @@
 						}]);
 					},
 					setCheckedKeys() {
+						this.Authority = [];
 						let _this = this;
 						this.p.authority.forEach((item, i) => {
 							_this.Authority.push(item.functionid);
@@ -98,6 +99,7 @@
 						this.$refs.tree.setCheckedKeys([]);
 					},
 					s() {
+						let _this = this;
 						axios.get("http://127.0.0.1:8080/DZWWeb//qj/api/QjPositionAction").then(function(resp) {
 							_this.Position = resp.data;
 						}).catch(function(e) {
