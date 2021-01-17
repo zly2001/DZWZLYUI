@@ -70,10 +70,10 @@
 
 					<el-dialog title="新增车辆" :visible.sync="xzdialogFormVisible">
 						<el-form :model="form">
-							<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+							<el-form-item label="车辆品牌名称" :label-width="formLabelWidth">
 								<el-input v-model="xz.brandname" autocomplete="off"></el-input>
 							</el-form-item>
-							<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+							<el-form-item label="首字母" :label-width="formLabelWidth">
 								<el-input v-model="xz.brandfirstzm" autocomplete="off"></el-input>
 							</el-form-item>
 						</el-form>
@@ -129,11 +129,7 @@
 
 		</div>
 	</body>
-
-	<!-- vue框架 -->
-	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
-	<!--组件库-->
-	<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
+	
 	<script>
 		var app = new Vue({
 			data: {
@@ -231,9 +227,15 @@
 				},
 				xzclpp(){
 					let _this = this;
-					alert(_this.xz.brandname);
-					alert(_this.xz.brandfirstzm);
-					axios.post(`http://127.0.0.1:8080/DZWWeb/lp/api/Engine/addMotorcycle/`,_this.xz).then(function(resp) {
+
+					if(_this.xz.brandfirstzm==""||_this.xz.brandname==""){
+						this.$message({
+							type: 'info',
+							message: '请填写完整信息！'
+						});
+					}
+					else{
+						axios.post(`http://127.0.0.1:8080/DZWWeb/lp/api/Engine/addMotorcycle/`,_this.xz).then(function(resp) {
 							_this.gotoPage(1);
 							_this.xz.brandname="";
 							_this.xz.brandfirstzm="";
@@ -248,6 +250,8 @@
 						message: '新增成功!',
 						
 					});
+					}
+					
 				}
 
 			},

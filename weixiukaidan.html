@@ -157,15 +157,15 @@
 						</el-col>
 						<el-col :span="5">
 							<div>
-								<el-input placeholder="实付金额" v-model="CaculationList.RealPay">
-									<template slot="prepend">实付金额</template>
+								<el-input placeholder="项目金额" v-model="CaculationList.jyjg">
+									<template slot="prepend">项目金额</template>
 								</el-input>
 							</div>
 						</el-col>
 						<el-col :span="5">
 							<div>
-								<el-input placeholder="是否有折扣" v-model="CaculationList.Discount">
-									<template slot="prepend">优惠</template>
+								<el-input placeholder="技班工薪" v-model="CaculationList.itemsid">
+									<template slot="prepend">价格</template>
 								</el-input>
 							</div>
 						</el-col>
@@ -234,7 +234,7 @@
 						</el-col>
 				</el-row>
 				<el-button type="success" plain>确定保存</el-button>
-				<el-button type="success" plain @click="dialogVisible=true">单据打印</el-button>
+				<el-button type="success" plain @click="showZFB">单据打印</el-button>
 				<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" @opened="print" :destroy-on-close="true" :fullscreen="false">
 					<div id="printInvoice" class="printInvoice">
 						<span>打印单据</span>
@@ -246,7 +246,7 @@
 				</el-dialog>
 				</el-form>
 				</el-row>
-				<el-row>
+				<!--<el-row>
 					<template>
 						<el-table :data="Inststion" stripe style="width: 100%" @row-click="getDetails">
 							<el-table-column prop="inid" label="维修单号" width="180">
@@ -276,7 +276,7 @@
 						<el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="pagesize" :total="Inststion.length" @size-change="handleSizeChange" @current-change="handleCurrentChange">
 						</el-pagination>
 					</template>
-				</el-row>
+				</el-row>-->
 			</el-card>
 		</div>
 	</body>
@@ -317,9 +317,8 @@
 				zt: "", //维修状态
 				xmoney: "", //维修金额
 				xdate: "", //维修日期
-				Inststion: [],
+				Inststion: {},
 				InststionDetail: [],
-				
 				CaculationList: {
 					inid: "", //维修编号
 					wid: "", //车辆id
@@ -353,17 +352,15 @@
 				},
 				rules: {
 					clientno: [{
-							required: true,
-							message: '请输入客户编号',
-							trigger: 'blur'
-						},
-						{
-							min: 3,
-							max: 5,
-							message: '长度在 3 到 5 个字符',
-							trigger: 'blur'
-						}
-					],
+						required: true,
+						message: '请输入客户编号',
+						trigger: 'blur'
+					}, {
+						min: 3,
+						max: 5,
+						message: '长度在 3 到 5 个字符',
+						trigger: 'blur'
+					}],
 					cliname: [{
 						required: true,
 						message: '请选择客户名称',
@@ -406,7 +403,6 @@
 				customerPay: [],
 				totalMoney: 0, //订单总价格
 				totalCount: 0, //订单商品总数量
-
 				message: "",
 				isShow1: false,
 				isShow2: true,
@@ -421,7 +417,7 @@
 				//状态
 				statusid: "",
 				//状态
-				type:1,
+				type: 1,
 				Status: [],
 				//维修单
 				Inststion: [],
@@ -430,97 +426,103 @@
 			},
 			mounted() {
 				this.selectAllByType();
-				this.selectAllByCnoAndStatusid();
+				this.CaculationList = indexApp.Inststion;
+				this.CaculationList.RealPay = parseFloat(this.CaculationList.itemsid) + parseFloat(this.CaculationList.workcardesc.column1) + parseFloat(this.CaculationList.jyjg);
+				sessionStorage.setItem('cassprice', this.CaculationList.RealPay); // 存入一个值
+				sessionStorage.setItem('inid', this.CaculationList.inid); // 存入一个值				
+				//this.selectAllByCnoAndStatusid();
 			},
 			methods: {
 				handleClick() {
-					if(this.activeName == "first") {
-						this.isShow1 = true;
-						this.isShow2 = false;
-					}
-					if(this.activeName == "second") {
-						this.isShow1 = false;
-						this.isShow2 = true;
-					}
-				},
-				//显示站内维修页面
-				showView(url) {
-					indexApp.showView(url);
-				},
-				// 张来遇写的根据状态类型查询不同的状态集合改了StatusMapper.xml文件
-				selectAllByType() {
-					let _this = this;
-					axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/StatusAction/selectAllByType/1`).then(function(resp) {
-						_this.Status = resp.data;
-						console.log(_this.Status);
-					});
-				},
-				//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
-				selectAllByCnoAndStatusid() {
-					let _this = this;
-					axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
-						cno: _this.cno,
-						statusid: _this.statusid,
-						type:1
-					}).then(function(resp) {
-						_this.Inststion = resp.data;
-						console.log(_this.Inststion);
-					});
-				},
-				handleSizeChange: function(size) {
-					this.pagesize = size;
-				},
-				handleCurrentChange: function(currentPage) {
-					this.currentPage = currentPage;
-				},
-				getDetails(row) {
-					this.CaculationList = row;
-					console.log(row)
-					/*let _this = this;
-					axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/{inid}`).then(resp => {
-						_this.InststionDetail = resp.data;						
-					});*/
-					this.CaculationList.RealPay = row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg;
-					console.log(row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg)
-				},
-				getAllMoney() {
-					/* this.totalCount = 0;
-					 this.totalMoney = 0;
-					
-					if(this.tableData) {
-						 this.tableData.forEach((element) => {
-							 this.totalCount += element.count;
-							 this.totalMoney = this.totalMoney + (element.price * element.count);
-							
+						if (this.activeName == "first") {
+							this.isShow1 = true;
+							this.isShow2 = false;
+						}
+						if (this.activeName == "second") {
+							this.isShow1 = false;
+							this.isShow2 = true;
+						}
+					},
+					showZFB() {
+						document.location = "html/zly/zfb.html";
+					},
+					//显示站内维修页面
+					showView(url) {
+						indexApp.showView(url);
+					},
+					// 张来遇写的根据状态类型查询不同的状态集合改了StatusMapper.xml文件
+					selectAllByType() {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/StatusAction/selectAllByType/1`).then(function(resp) {
+							_this.Status = resp.data;
+							console.log(_this.Status);
 						});
-						
-					}*/
-
-				},
-				print() {
-					$("#printInvoice").load("Invoice.html")
-				},
-				handleClose(done) {
-					this.$confirm('确认关闭？')
-						.then(_ => {
-							done(); //关闭
-						})
-						.catch(_ => {});
-				},
-				open1() {
-					this.$notify({
-						title: '成功',
-						message: '恭喜你支付成功',
-						type: 'success'
-					});
-				},
-				close() {
-					this.$notify({
-						title: '警告',
-						message: '支付失败',
-						type: 'warning'
-					});
-				}
+					},
+					//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+					selectAllByCnoAndStatusid() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
+							cno: _this.cno,
+							statusid: _this.statusid,
+							type: 1
+						}).then(function(resp) {
+							_this.Inststion = resp.data;
+							console.log(_this.Inststion);
+						});
+					},
+					handleSizeChange: function(size) {
+						this.pagesize = size;
+					},
+					handleCurrentChange: function(currentPage) {
+						this.currentPage = currentPage;
+					},
+					getDetails(row) {
+						this.CaculationList = row;
+						console.log(row)
+							/*let _this = this;
+							axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/{inid}`).then(resp => {
+								_this.InststionDetail = resp.data;						
+							});*/
+						this.CaculationList.RealPay = row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg;
+						console.log(row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg)
+					},
+					getAllMoney() {
+						/* this.totalCount = 0;
+						 this.totalMoney = 0;
+					
+						if(this.tableData) {
+							 this.tableData.forEach((element) => {
+								 this.totalCount += element.count;
+								 this.totalMoney = this.totalMoney + (element.price * element.count);
+								
+							});
+							
+						}*/
+					},
+					print() {
+						$("#printInvoice").load("Invoice.html")
+					},
+					handleClose(done) {
+						this.$confirm('确认关闭？')
+							.then(_ => {
+								done(); //关闭
+							})
+							.catch(_ => {});
+					},
+					open1() {
+						this.$notify({
+							title: '成功',
+							message: '恭喜你支付成功',
+							type: 'success'
+						});
+					},
+					close() {
+						this.$notify({
+							title: '警告',
+							message: '支付失败',
+							type: 'warning'
+						});
+					}
 			}
 		});
 	</script>

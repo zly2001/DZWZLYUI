@@ -17,6 +17,11 @@ var menuMapping = {
 	"j003":  "html/ljy/EngineLevel2.html",
 	"j004":  "html/ljy/EngineCar.html",
 	
+	"jc002":  "html/lp/fadongjipinpai.html",
+	"jc003":  "html/lp/chexingdangan.html",
+	"jc004":  "html/lp/weixiu.html",
+	"jc005":  "html/lp/gonghuoshang.html",
+	"jc006":  "html/lp/shangpin.html",
 	
-	
+	"xt003":  "html/zly/zlyQXFJ.html",
 }

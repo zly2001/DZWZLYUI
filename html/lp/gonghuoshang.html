@@ -16,19 +16,19 @@
 			<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
 			<el-dialog title="新增供货商" :visible.sync="dialogFormVisible">
 				<el-form :model="firm">
-					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+					<el-form-item label="供货商名称" :label-width="formLabelWidth">
 						<el-input v-model="firm.firmname" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+					<el-form-item label="供货商地址" :label-width="formLabelWidth">
 						<el-input v-model="firm.faddress" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+					<el-form-item label="公司地址" :label-width="formLabelWidth">
 						<el-input v-model="firm.fphone" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+					<el-form-item label="联系人" :label-width="formLabelWidth">
 						<el-input v-model="firm.lxr" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
+					<el-form-item label="联系人电话" :label-width="formLabelWidth">
 						<el-input v-model="firm.lphone" autocomplete="off"></el-input>
 					</el-form-item>
 				</el-form>
@@ -99,7 +99,6 @@
 		</div>
 	</body>
 	
-	
 	<script type="text/javascript">
 		var app = new Vue({
 			data: {
@@ -113,7 +112,7 @@
 				formLabelWidth: '120px',
 				firm:{
 					firmid:0,
-					firmname:"",
+					firmname:"" ,
 					faddress:"",
 					fphone:"",
 					lxr:"",
@@ -139,7 +138,23 @@
 				},
 				xzFrim() {
 					let _this = this;
-					axios.post(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addFirm`,_this.firm).then(function(resp) {
+					
+					
+					if(_this.firm.firmname==""||_this.firm.faddress==""||_this.firm.fphone==""||_this.firm.lxr==""||_this.firm.lphone==""){
+						this.$message({
+							type: 'info',
+							message: '请填写完整信息！'
+						});
+					}
+					
+					else if(_this.firm.lphone.length!=11){
+						this.$message({
+							type: 'info',
+							message: '手机号必须为11位！'
+						});
+					}
+					else{
+						axios.post(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addFirm`,_this.firm).then(function(resp) {
 						_this.gotoPage(1);
 					}).catch(function(e) {
 						console.info(e);
@@ -149,6 +164,8 @@
 						message: '新增成功!',
 					});
 					_this.dialogFormVisible = false;
+					}
+					
 				},
 				xgFirm(row) {
 					let _this = this;

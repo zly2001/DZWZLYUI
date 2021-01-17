@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/index.css" />
+	</head>
+
+	<body>
+		<div id="zlyQXFJ">
+			<el-tree :data="data" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current :props="defaultProps">
+			</el-tree>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2&ak=1cobfYLh6Gj1v28GQwBAX0Uqm1OdGbO1"></script>
+	<script src="http://api.map.baidu.com/library/GeoUtils/1.2/src/GeoUtils_min.js"></script>
+
+	<script type="text/javascript" src="js/index.js"></script>
+
+	<script>
+		var zlyQXFJ = new Vue({
+			data: {
+			},
+			methods: {
+				functions: []
+			},
+			mounted() {
+				let _this = this;
+				axios.get("http://127.0.0.1:8080/DZWWeb//qj/api/QjFunctionAction").then(function(resp) {
+					_this.functions = resp.data;
+					console.log(_this.functions);
+				}).catch(function(e) {
+					console.info(e);
+				});
+			}
+		}).$mount('#zlyQXFJ');
+	</script>
+
+</html>

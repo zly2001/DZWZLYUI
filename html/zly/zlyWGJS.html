@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>竣工检验</title>
+		<style>
+			.text {
+				font-size: 14px;
+			}
+			
+			.clearfix:before,
+			.clearfix:after {
+				display: table;
+				content: "";
+			}
+			
+			.clearfix:after {
+				clear: both
+			}
+			
+			.box-card {
+				width: 100%;
+			}
+			
+			.el-table-column {
+				text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="zlyWGJS">
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<el-col :span="4">
+						竣工检验
+					</el-col>					
+					<el-col :span="5" :offset="13">
+						<el-input v-model="cno" placeholder="请输入车牌号"></el-input>
+					</el-col>
+					<el-col :span="2" style="margin-left: 10px;">
+						<el-button @click="selectAllByCnoAndStatusid">搜索</el-button>
+					</el-col>
+				</div>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修单" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Inststion" @row-click="handdleInststion" stripe style="width: 100%">
+							<el-table-column prop="inid" label="维修单号" width="180">
+							</el-table-column>
+							<el-table-column prop="cno" label="车牌号" width="180">
+							</el-table-column>
+							<el-table-column prop="zrr" label="驾驶人" width="100">
+							</el-table-column>
+							<el-table-column prop="jcday" label="进厂日期" width="180">
+							</el-table-column>
+							<el-table-column prop="jdate" label="救援日期" width="180">
+							</el-table-column>
+							<el-table-column prop="workcardesc.wid" label="救援车辆" width="100">
+							</el-table-column>
+							<el-table-column prop="iszn == 1 ? 站内维修 : 站外维修" label="业务类型" width="100">
+							</el-table-column>
+							<el-table-column prop="iszn == 1 ? 站内维修 : 站外维修" label="维修状态" width="100">
+							</el-table-column>
+							<el-table-column prop="yjday" label="预计完工" width="180">
+							</el-table-column>
+							<el-table-column fixed="right" label="操作" width="150">
+								<template slot-scope="scope">
+									<el-button v-if="scope.row.statusid == 4" @click="shoowJGJY(scope.row)" type="primary">结算</el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="结算单" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Cashiers" stripe style="width: 100%">
+							<el-table-column type="index" label="序号">
+							</el-table-column>
+							<el-table-column prop="casid" label="结算单号">
+							</el-table-column>
+							<el-table-column prop="inid" label="维修单号">
+							</el-table-column>
+							<el-table-column prop="shisprice" label="实收金额">
+							</el-table-column>
+							<el-table-column prop="cassprice" label="应收金额">
+							</el-table-column>
+							<el-table-column prop="casdate" label="开单日期">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+			</el-card>
+		</div>
+	</body>
+	<script>
+		var zlyWGJS = new Vue({
+			el: "#zlyWGJS",
+			data: {
+				//维修单
+				Inststion1: {},
+				dialogVisible: false,
+				isShow1: true,
+				activeName: "first",
+				activeName1: "first",
+				//车牌
+				cno: "",
+				//状态
+				Status: [],
+				//维修单
+				Inststion: [],
+				//结算
+				Cashiers: []
+			},
+			mounted() {
+				this.selectAllByCnoAndStatusid();
+				this.selectAllByCashiers();
+			},
+			methods: {
+				//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+				selectAllByCnoAndStatusid() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
+							cno: _this.cno,
+							statusid: "",
+							type: 6
+						}).then(function(resp) {
+							_this.Inststion = resp.data;
+						});
+					},
+					//张来遇写的查询所有结算
+					selectAllByCashiers() {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/AlipayAction`).then(function(resp) {
+							_this.Cashiers = resp.data;
+						});
+					},
+					//显示竣工检验模态框
+					shoowJGJY(Inststion) {
+						indexApp.Inststion = Inststion;	
+						indexApp.showView("weixiukaidan.html");
+					},
+					//修改维修单状态
+					updateInststion() {
+						let _this = this;
+						axios.put(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction`, this.Inststion1).then(function(resp) {
+							if (resp.data.code == "200") {
+								_this.$message({
+									showClose: true,
+									message: messages,
+									type: 'success'
+								});
+								_this.selectAllByCnoAndStatusid();
+							}
+						});
+						this.dialogVisible = false;
+					},
+					//表格双击改变详情方法
+					handdleInststion(row) {
+						this.Wxxq = row.wxxq;
+					}
+			}
+		});
+	</script>
+
+</html>

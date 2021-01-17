@@ -19,7 +19,7 @@
 			&nbsp;&nbsp;
 			<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
 			<el-dialog title="新增品牌发动机" :visible.sync="dialogFormVisible">
-				<el-form :model="form">
+				<el-form :model="form2">
 					<el-form-item label="发动机品牌名称" :label-width="formLabelWidth">
 						<el-input v-model="name2" autocomplete="off"></el-input>
 					</el-form-item>
@@ -77,10 +77,6 @@
 		</div>
 	</body>
 	
-	<!-- vue框架 -->
-	<script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
-	<!--组件库-->
-	<script src="js/index.js" type="text/javascript" charset="utf-8"></script>
 	<script>
 		var app = new Vue({
 			data: {
@@ -110,17 +106,28 @@
 				},
 				xzEngine() {
 					let _this = this;
-					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addEngine/${_this.name2}`).then(function(resp) {
-
-					}).catch(function(e) {
+					if(_this.name2==""){
+						this.$message({
+							type: 'info',
+							message: '请填写发动机名称！'
+						});
+					}
+					else{
+						axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addEngine/${_this.name2}`).then(function(resp) {
+							
+							_this.gotoPage(1);
+						}).catch(function(e) {
 						console.info(e);
-					});
-					this.$message({
+						});
+						this.$message({
 						type: 'success',
 						message: '新增成功!',
-					});
-					_this.name2 = "";
-					_this.dialogFormVisible = false;
+						});
+						_this.name2 = "";
+						_this.dialogFormVisible = false;
+					}
+					
+					
 				},
 				xgEngine(bh, name) {
 					let _this = this;

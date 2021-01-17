@@ -9,46 +9,31 @@
 
 	<body>
 		<div id="app">
-			<h2>维修项目</h2> 维修项目名称:&nbsp;
+			<h2>商品</h2> 商品名称:&nbsp;
 			<el-input v-model="input" style="width:200px" placeholder="请输入内容"></el-input>&nbsp;&nbsp;&nbsp;
 			<el-button icon="el-icon-search" circle @click="gotoPage(1)"></el-button>
 			&nbsp;&nbsp;
 			<el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
-			<el-dialog title="新增维修项目" :visible.sync="dialogFormVisible">
+			<el-dialog title="新增商品" :visible.sync="dialogFormVisible">
 				<el-form :model="Items">
-					<el-form-item label="维修项目名称" :label-width="formLabelWidth">
-						<el-input v-model="Items.itemsname" autocomplete="off"></el-input>
+					<el-form-item label="商品名称" :label-width="formLabelWidth">
+						<el-input v-model="Shop.shopname" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="维修项目价格" :label-width="formLabelWidth">
-						<el-input v-model="Items.itemsprice" autocomplete="off"></el-input>
+					<el-form-item label="商品重量" :label-width="formLabelWidth">
+						<el-input v-model="Shop.weight" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="维修型号" :label-width="formLabelWidth">
-						<template>
-							<el-select v-model="value" placeholder="请选择" style="width: 100%;">
-								<el-option v-for="item in options" :key="item.brandid" :label="item.brandname" :value="item.brandid">
-								</el-option>
-							</el-select>
-						</template>
+
+					<el-form-item label="商品进价" :label-width="formLabelWidth">
+						<el-input v-model="Shop.stockprice" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="维修类型" :label-width="formLabelWidth">
-						<template>
-							<el-select v-model="Items.itemstypeid" placeholder="请选择" style="width: 100%;">
-								<el-option v-for="item in Itemstype" :key="item.itemstypeid" :label="item.itemstypename" :value="item.itemstypeid">
-								</el-option>
-							</el-select>
-						</template>
+
+					<el-form-item label="商品售价" :label-width="formLabelWidth">
+						<el-input v-model="Shop.sellingprice" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="维修项目时间" :label-width="formLabelWidth">
-						<el-input v-model="Items.itemstime" autocomplete="off"></el-input>
+					<el-form-item label="商品数量" :label-width="formLabelWidth">
+						<el-input v-model="Shop.quantity" autocomplete="off"></el-input>
 					</el-form-item>
-					<el-form-item label="供货商" :label-width="formLabelWidth">
-						<template>
-							<el-select v-model="value2" placeholder="请选择" style="width: 100%;">
-								<el-option v-for="item in options2" :key="item.firmid" :label="item.firmname" :value="item.firmid">
-								</el-option>
-							</el-select>
-						</template>
-					</el-form-item>
+
 				</el-form>
 				<div slot="footer" class="dialog-footer">
 					<el-button @click="dialogFormVisible=false">取 消</el-button>
@@ -64,15 +49,15 @@
 							{{temp.$index+1}}
 						</template>
 					</el-table-column>
-					<el-table-column prop="itemsname" label="维修项目名称" width="150px">
+					<el-table-column prop="shopname" label="商品名称" width="202px">
 					</el-table-column>
-					<el-table-column prop="itemsprice" label="维修项目价格" width="202px">
+					<el-table-column prop="weight" label="商品重量" width="202px">
 					</el-table-column>
-					<el-table-column prop="brandname" label="维修型号" width="202px">
+					<el-table-column prop="stockprice" label="商品进价" width="150px">
 					</el-table-column>
-					<el-table-column prop="itemstime" label="维修项目时间" width="150px">
+					<el-table-column prop="sellingprice" label="商品售价" width="150px">
 					</el-table-column>
-					<el-table-column prop="firmname" label="供货商名称" width="150px">
+					<el-table-column prop="quantity" label="商品数量" width="150px">
 					</el-table-column>
 					<el-table-column label="编辑" width="130px">
 						<template slot-scope="temp">
@@ -102,31 +87,30 @@
 				dialogFormVisible: false,
 				tableData: [],
 				formLabelWidth: '120px',
-				Items: {
-					itemsid: 0,
-					itemstypeid: "",
-					itemsname: "",
-					itemsprice: "",
-					itemsxh: "",
-					itemstime: "",
-					column1: "",
-					column2: "",
-					column3: "",
-					column4: "",
-
+				Shop: {
+					shopid: 0,
+					goodid: null,
+					firmid: null,
+					shopname: "",
+					weight: "",
+					image: null,
+					stockprice: "",
+					sellingprice: "",
+					quantity: "",
+					agreement: null,
+					numbering:  null,
+					column1: null,
+					column2: null,
+					column3: null,
+					column4: null,
 				},
-				Itemstype:[],
-				options: [],
-				value: '',
-				options2: [],
-				value2: '',
 
 			},
 			methods: {
 				gotoPage(page) {
 					let _this = this;
 					var bh = _this.input == "" ? "-1" : _this.input;
-					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll4/${page}/${bh}`).then(function(resp) {
+					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll7/${page}/${bh}`).then(function(resp) {
 						_this.tableData = resp.data.list;
 						_this.info = resp.data;
 					}).catch(function(e) {
@@ -134,18 +118,17 @@
 					});
 				},
 				xzFrim() {
-						let _this = this;
-					if(_this.Items.itemsname==""||_this.Items.itemsprice==""||_this.Items.value==""||_this.Items.itemstime==""||_this.Items.value2==""){
+					
+					
+					let _this = this;
+					if(_this.Shop.quantity==""||_this.Shop.shopname==""||_this.Shop.weight==""||_this.Shop.stockprice==""||_this.Shop.sellingprice==""){
 						this.$message({
 							type: 'info',
 							message: '请填写完整信息！',
 						});
 					}
 					else{
-					
-					_this.Items.itemsxh = _this.value;
-					_this.Items.column1 = _this.value2;
-					axios.post(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addItems`, _this.Items).then(function(resp) {
+						axios.post(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/addShop`, _this.Shop).then(function(resp) {
 						_this.gotoPage(1);
 					}).catch(function(e) {
 						console.info(e);
@@ -189,13 +172,6 @@
 					});
 					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/Engine/selectAll6`).then(function(resp) {
 						_this.options2 = resp.data;
-					}).catch(function(e) {
-						console.info(e);
-					});
-					//张来遇
-					axios.get(`http://127.0.0.1:8080/DZWWeb//lp/api/ItemstypeAction/selectAll`).then(function(resp) {
-						_this.Itemstype = resp.data;
-						console.info(_this.Itemstype);
 					}).catch(function(e) {
 						console.info(e);
 					});
