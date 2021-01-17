@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+
+	</head>
+
+	<body>
+		<!--<script src="//unpkg.com/vue/dist/vue.js"></script>-->
+		<!--<script src="//unpkg.com/element-ui@2.14.1/lib/index.js"></script>-->
+		<div id="app">
+			<el-row>
+				<!--<el-button icon="el-icon-search" circle></el-button>-->
+				<el-button type="primary" icon="el-icon-edit" @click="dialogVisible=true" circle></el-button>
+				<el-button type="success" icon="el-icon-check" circle></el-button>
+				<el-button type="info" icon="el-icon-message" circle></el-button>
+				<el-button type="warning" icon="el-icon-star-off" circle></el-button>
+				<el-button type="danger" icon="el-icon-delete" circle></el-button>
+			</el-row>
+			<!--<el-input placeholder="请输入内容"></el-input>-->
+			<template>
+
+				<el-table :data="tableData" height="250" border style="width: 100%" @row-click="chaban">
+
+					<el-table-column prop="tid" label="编号" width="180">
+					</el-table-column>
+					<el-table-column prop="tname" label="技工组名称" width="180">
+					</el-table-column>
+				</el-table>
+
+				<el-table :data="tableData2" height="250" border style="width: 100%">
+
+					<el-table-column prop="artisanid" label="技工编号" width="180">
+					</el-table-column>
+					<el-table-column prop="sid" label="星级">
+					</el-table-column>
+					<el-table-column prop="tid" label="班组">
+					</el-table-column>
+					<el-table-column prop="aname" label="技工名字">
+					</el-table-column>
+					<el-table-column prop="asex" label="性别">
+					</el-table-column>
+					<el-table-column prop="aphone" label="电话">
+					</el-table-column>
+					<el-table-column prop="address" label="地址">
+					</el-table-column>
+					<el-table-column prop="acaid" label="身份证号">
+					</el-table-column>
+					<el-table-column prop="acraft" label="工种">
+					</el-table-column>
+					<el-table-column prop="azt" label="技工状态">
+					</el-table-column>
+
+				</el-table>
+			</template>
+			<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" :destroy-on-close="true" :fullscreen="false">
+				<el-form :model="addJGLevel" status-icon  ref="addJGLevel" label-width="100px" class="demo-ruleForm">
+					<el-form-item label="星级id" prop="sid">
+						<el-input v-model="addJGLevel.sid" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="班组id" prop="tid">
+						<el-input v-model="addJGLevel.tid"></el-input>
+					</el-form-item>
+					<el-form-item label="姓名" prop="aname">
+						<el-input v-model="addJGLevel.aname"></el-input>
+					</el-form-item>
+					<el-form-item label="性别" prop="asex">
+						<el-input v-model="addJGLevel.asex"></el-input>
+					</el-form-item>
+					<el-form-item label="电话" prop="aphone">
+						<el-input v-model="addJGLevel.aphone"></el-input>
+					</el-form-item>
+					<el-form-item label="地址" prop="address">
+						<el-input v-model="addJGLevel.address"></el-input>
+					</el-form-item>
+					<el-form-item label="身份证" prop="acaid">
+						<el-input v-model="addJGLevel.acaid"></el-input>
+					</el-form-item>
+					<el-form-item label="维修工种" prop="acraft">
+						<el-input v-model="addJGLevel.acraft"></el-input>
+					</el-form-item>
+					<el-form-item label="离职原因" prop="alzyy">
+						<el-input v-model="addJGLevel.alzyy"></el-input>
+					</el-form-item>
+					<span class="demonstration">入职时间</span>
+					<el-date-picker v-model="addJGLevel.arzday" type="date" placeholder="选择日期">
+					</el-date-picker>
+
+					
+				</el-form>
+				<span slot="footer" class="dialog-footer">
+				    <el-button @click="dialogVisible = false">取 消</el-button>
+				    <el-button type="primary" @click="nsure()">确 定</el-button>
+ 				 </span>
+			</el-dialog>
+
+		</div>
+
+	</body>
+
+	<script>
+		var app = new Vue({
+			el: "#app",
+			data: {
+				dialogVisible: false,
+				banzu: {
+					wid: "",
+					caid: "",
+					cbrand: "",
+					mglj: ""
+				},
+				addJGLevel: {
+					sid: "",
+					tid: "",
+					aname: "",
+					asex: "",
+					aphone: "",
+					address: "",
+					acaid: "",
+					acraft: "",
+					alzyy: "",
+					arzday: "",
+					alzday: ""
+				},
+				input: "",
+				tableData: [],
+				tableData2: []
+			},
+			mounted() {
+				this.select();
+			},
+			methods: {
+				select() {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/banzuAction/select`).then(function(resp) {
+							//alert(resp);
+							_this.tableData = resp.data;
+							console.log(_this.tableData);
+						});
+					},
+					nsure() {
+						let _this = this;
+						console.log(this.addJGLevel)
+						axios.post(`http://127.0.0.1:8080/DZWWeb/ljy/api/jgbanzuAction/insertSelective`, this.addJGLevel).then(resp => {
+							if (resp.data.code == "200") {
+								this.$message({
+									message: "新增技工成功",
+									type: 'success'
+								});
+								_this.dialogVisible = false;
+							}
+						})
+					},
+					handleClose(done) {
+							this.$confirm('确认关闭？')
+								.then(_ => {
+									done();
+								})
+								.catch(_ => {});
+						},
+					chaban(row) {
+						let _this = this;
+						axios.get(`http://127.0.0.1:8080/DZWWeb/ljy/api/jgbanzuAction/jgbzselect/${row.tid}`).then(function(resp) {
+							//alert(resp);
+							_this.tableData2 = resp.data;
+							console.log(_this.tableData2);
+						});
+					}
+			}
+		})
+	</script>
+
+</html>

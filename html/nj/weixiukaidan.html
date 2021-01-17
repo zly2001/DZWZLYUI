@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>维修开单</title>
+		<style>
+			.text {
+				font-size: 14px;
+			}
+			
+			.clearfix:before,
+			.clearfix:after {
+				display: table;
+				content: "";
+			}
+			
+			.clearfix:after {
+				clear: both
+			}
+			
+			.box-card {
+				width: 100%;
+			}
+			
+			.el-table-column {
+				text-align: center;
+			}
+			
+			.printInvoice {
+				width: 100% !important;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<div id="weixiukaidan">
+
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<el-col :span="4">
+						维修开单
+						<el-button @click="showView('html/zly/zlyZNWX.html')" type="primary">站内维修</el-button>
+					</el-col>
+					<el-col :span="5" :offset="7">
+						<template>
+							<el-select v-model="statusid" value-key="statusid" placeholder="请选择维修单状态">
+								<el-option v-for="item in Status" :key="item.statusid" :label="item.statusname" :value="item.statusid">
+								</el-option>
+							</el-select>
+						</template>
+					</el-col>
+					<el-col :span="5">
+						<el-input v-model="cno" placeholder="请输入车牌号"></el-input>
+					</el-col>
+					<el-col :span="2" style="margin-left: 10px;">
+						<el-button @click="selectAllByCnoAndStatusid">搜索</el-button>
+					</el-col>
+				</div>
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修单" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+
+				<el-row>
+					<template>
+						<el-tabs v-model="activeName1">
+							<el-tab-pane label="维修详情" name="first"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<!--<el-row>
+					<template>
+						<el-table :data="messages" stripe style="width: 100%">
+							<el-table-column prop="message" label="日期" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>-->
+				<!--<el-row>
+					<template>
+						<el-tabs v-model="activeName" @tab-click="handleClick">
+							<el-tab-pane label="维修详情" name="first"></el-tab-pane>
+							<el-tab-pane label="维修历史" name="second"></el-tab-pane>
+							<el-tab-pane label="角色管理" name="third"></el-tab-pane>
+						</el-tabs>
+					</template>
+				</el-row>
+				<el-row v-show="isShow1">
+					<template>
+						<el-table :data="messages" stripe style="width: 100%; height=250;">
+							<el-table-column prop="message" label="日期" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>
+				<el-row v-show="isShow2">
+					<template>
+						<el-table :data="messages" stripe style="width: 100%; height=250;">
+							<el-table-column prop="message" label="日期1" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="姓名1" width="180">
+							</el-table-column>
+							<el-table-column prop="message" label="地址1">
+							</el-table-column>
+						</el-table>
+					</template>
+				</el-row>-->
+				<el-row>
+					<el-form :model="CaculationList" :rules="rules" ref="CaculationList" label-width="100px" class="demo-ruleForm">
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="请输入客户名称" v-model="CaculationList.wid">
+									<template slot="prepend">客户</template>
+								</el-input>
+							</div>
+						</el-col>
+						<!--<el-col :span="5">
+				<div>
+					<el-input placeholder="请输入客户余额" v-model="CaculationList.CountNumber">
+						<template slot="prepend">客户余额</template>
+					</el-input>
+				</div>
+				</el-col>-->
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="请输入维修单号" v-model="CaculationList.inid">
+									<template slot="prepend">维修单号</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="请输入收银员" v-model="CaculationList.casid">
+									<template slot="prepend">收银员</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="根据工时和技工人员算出应付金额" v-model="CaculationList.RealPay">
+									<template slot="prepend">应付金额</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="实付金额" v-model="CaculationList.RealPay">
+									<template slot="prepend">实付金额</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="是否有折扣" v-model="CaculationList.Discount">
+									<template slot="prepend">优惠</template>
+								</el-input>
+							</div>
+						</el-col>
+
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="救援车派出记录id" v-model="CaculationList.workcarjlid">
+									<template slot="prepend">救援车派出记录id</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="车牌号" v-model="CaculationList.cno">
+									<template slot="prepend">车牌号</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="进厂日期" v-model="CaculationList.jdate">
+									<template slot="prepend">进厂日期</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="完工日期" v-model="CaculationList.wgday">
+									<template slot="prepend">完工日期</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="总耗工时" v-model="CaculationList.zhgs">
+									<template slot="prepend">总耗工时</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="救援价格" v-if="CaculationList.workcardesc" v-model="CaculationList.workcardesc.column1">
+									<template slot="prepend">救援价格</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="责任人" v-model="CaculationList.zrr">
+									<template slot="prepend">责任人</template>
+								</el-input>
+							</div>
+						</el-col>
+						<el-col :span="5">
+							<div>
+								<el-input placeholder="质检员" v-model="CaculationList.zjy">
+									<template slot="prepend">质检员</template>
+								</el-input>
+							</div>
+						</el-col>
+
+						<el-col :span="5">
+							<el-input placeholder="请输入内容" v-model="CaculationList.insevent">
+								<template slot="prepend">备注</template>
+							</el-input>
+						</el-col>
+				</el-row>
+				<el-button type="success" plain>确定保存</el-button>
+				<el-button type="success" plain @click="dialogVisible=true">单据打印</el-button>
+				<el-dialog title="提示" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" @opened="print" :destroy-on-close="true" :fullscreen="false">
+					<div id="printInvoice" class="printInvoice">
+						<span>打印单据</span>
+					</div>
+					<span slot="footer" class="dialog-footer">
+				    <el-button @click="close()">取 消</el-button>
+				    <el-button type="primary" @click="open1()">确 定</el-button>
+ 				 </span>
+				</el-dialog>
+				</el-form>
+				</el-row>
+				<el-row>
+					<template>
+						<el-table :data="Inststion" stripe style="width: 100%" @row-click="getDetails">
+							<el-table-column prop="inid" label="维修单号" width="180">
+							</el-table-column>
+							<el-table-column prop="cno" label="车牌号" width="180">
+							</el-table-column>
+							<el-table-column prop="zrr" label="驾驶人" width="100">
+							</el-table-column>
+							<el-table-column prop="jcday" label="进厂日期" width="180">
+							</el-table-column>
+							<el-table-column prop="jdate" label="救援日期" width="180">
+							</el-table-column>
+							<el-table-column prop="workcardesc.wid" label="救援车辆" width="100">
+							</el-table-column>
+							<el-table-column prop="iszn == 1 ? 站内维修 : 站外维修" label="业务类型" width="100">
+							</el-table-column>
+							<el-table-column prop="izt == 1 ? 站内维修 : 站外维修" label="维修状态" width="100">
+							</el-table-column>
+							<el-table-column prop="yjday" label="预计完工" width="180">
+							</el-table-column>
+							<el-table-column fixed="right" label="操作" width="150">
+								<template slot-scope="scope">
+									<el-button size="mini" type="danger" icon="el-icon-delete" circle></el-button>
+								</template>
+							</el-table-column>
+						</el-table>
+						<el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="pagesize" :total="Inststion.length" @size-change="handleSizeChange" @current-change="handleCurrentChange">
+						</el-pagination>
+					</template>
+				</el-row>
+			</el-card>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var weixiukaidan = new Vue({
+			el: "#weixiukaidan",
+			data: {
+				inid: "", //维修编号
+				wid: "", //车辆id
+				statusid: "", //状态id
+				casid: "", //收银id
+				tid: "", //班组id
+				workcarjlid: "", //救援车派出记录id
+				cno: "", //车牌号
+				izt: "", //维修状态
+				jdate: "", //进厂日期
+				jcday: "", //接车时间
+				yjday: "", //预计完工时间
+				wgday: "", //完工日期
+				iszn: "", //是否站内
+				lc: "", //里程数
+				ifjs: "", //是否结算
+				insevent: "", //维修备注
+				zjy: "", //质检员
+				zrr: "", //责任人
+				zhgs: "", //总耗工时
+				jyjg: "", //救援价格
+				xqid: "", //详情id
+				itemsid: "", //维修项目id
+				xqname: "", //商品名称
+				xqsl: "", //商品数量
+				spid: "", //商品id
+				zt: "", //维修状态
+				xmoney: "", //维修金额
+				xdate: "", //维修日期
+				Inststion: [],
+				InststionDetail: [],
+				
+				CaculationList: {
+					inid: "", //维修编号
+					wid: "", //车辆id
+					statusid: "", //状态id
+					casid: "", //收银id
+					tid: "", //班组id
+					workcarjlid: "", //救援车派出记录id
+					cno: "", //车牌号
+					izt: "", //维修状态
+					jdate: "", //进厂日期
+					jcday: "", //接车时间
+					yjday: "", //预计完工时间
+					wgday: "", //完工日期
+					iszn: "", //是否站内
+					lc: "", //里程数
+					ifjs: "", //是否结算
+					insevent: "", //维修备注
+					zjy: "", //质检员
+					zrr: "", //责任人
+					zhgs: "", //总耗工时
+					jyjg: "", //救援价格
+					xqid: "", //详情id
+					itemsid: "", //维修项目id
+					xqname: "", //商品名称
+					xqsl: "", //商品数量
+					spid: "", //商品id
+					zt: "", //维修状态
+					xmoney: "", //维修金额
+					xdate: "", //维修日期
+					RealPay: ""
+				},
+				rules: {
+					clientno: [{
+							required: true,
+							message: '请输入客户编号',
+							trigger: 'blur'
+						},
+						{
+							min: 3,
+							max: 5,
+							message: '长度在 3 到 5 个字符',
+							trigger: 'blur'
+						}
+					],
+					cliname: [{
+						required: true,
+						message: '请选择客户名称',
+						trigger: 'change'
+					}],
+					cliphone: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户电话号码',
+						trigger: 'change'
+					}],
+					cliaddress: [{
+						type: 'String',
+						required: true,
+						message: '请选择客户地址',
+						trigger: 'change'
+					}],
+					employeeid: [{
+						type: 'array',
+						required: true,
+						message: '请至少选择一个接待人员',
+						trigger: 'change'
+					}],
+					mid: [{
+						required: true,
+						message: '请填写客户等级',
+						trigger: 'change'
+					}],
+					sfz: [{
+						required: true,
+						message: '请填写客户信息',
+						trigger: 'blur'
+					}],
+					khbz: [{
+						required: true,
+						message: '请填写客户备注',
+						trigger: 'blur'
+					}]
+				},
+				customerPay: [],
+				totalMoney: 0, //订单总价格
+				totalCount: 0, //订单商品总数量
+
+				message: "",
+				isShow1: false,
+				isShow2: true,
+				activeName: "second",
+				activeName1: "first",
+				//  el-pagination 初始页
+				currentPage: 1,
+				//  el-pagination 每页的数据
+				pagesize: 5,
+				//车牌
+				cno: "",
+				//状态
+				statusid: "",
+				//状态
+				type:1,
+				Status: [],
+				//维修单
+				Inststion: [],
+				messages: [],
+				dialogVisible: false,
+			},
+			mounted() {
+				this.selectAllByType();
+				this.selectAllByCnoAndStatusid();
+			},
+			methods: {
+				handleClick() {
+					if(this.activeName == "first") {
+						this.isShow1 = true;
+						this.isShow2 = false;
+					}
+					if(this.activeName == "second") {
+						this.isShow1 = false;
+						this.isShow2 = true;
+					}
+				},
+				//显示站内维修页面
+				showView(url) {
+					indexApp.showView(url);
+				},
+				// 张来遇写的根据状态类型查询不同的状态集合改了StatusMapper.xml文件
+				selectAllByType() {
+					let _this = this;
+					axios.get(`http://127.0.0.1:8080/DZWWeb/zly/api/StatusAction/selectAllByType/1`).then(function(resp) {
+						_this.Status = resp.data;
+						console.log(_this.Status);
+					});
+				},
+				//张来遇写的根据维修状态和车牌号查询所有维修单与维修详情和救援记录改了Inststion.java文件和InststionMapper.xml文件
+				selectAllByCnoAndStatusid() {
+					let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/selectAllByCnoAndStatusid`, {
+						cno: _this.cno,
+						statusid: _this.statusid,
+						type:1
+					}).then(function(resp) {
+						_this.Inststion = resp.data;
+						console.log(_this.Inststion);
+					});
+				},
+				handleSizeChange: function(size) {
+					this.pagesize = size;
+				},
+				handleCurrentChange: function(currentPage) {
+					this.currentPage = currentPage;
+				},
+				getDetails(row) {
+					this.CaculationList = row;
+					console.log(row)
+					/*let _this = this;
+					axios.post(`http://127.0.0.1:8080/DZWWeb/zly/api/InststionAction/{inid}`).then(resp => {
+						_this.InststionDetail = resp.data;						
+					});*/
+					this.CaculationList.RealPay = row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg;
+					console.log(row.jyjg * row.workcardesc.column1 * row.itemsid + row.jyjg)
+				},
+				getAllMoney() {
+					/* this.totalCount = 0;
+					 this.totalMoney = 0;
+					
+					if(this.tableData) {
+						 this.tableData.forEach((element) => {
+							 this.totalCount += element.count;
+							 this.totalMoney = this.totalMoney + (element.price * element.count);
+							
+						});
+						
+					}*/
+
+				},
+				print() {
+					$("#printInvoice").load("Invoice.html")
+				},
+				handleClose(done) {
+					this.$confirm('确认关闭？')
+						.then(_ => {
+							done(); //关闭
+						})
+						.catch(_ => {});
+				},
+				open1() {
+					this.$notify({
+						title: '成功',
+						message: '恭喜你支付成功',
+						type: 'success'
+					});
+				},
+				close() {
+					this.$notify({
+						title: '警告',
+						message: '支付失败',
+						type: 'warning'
+					});
+				}
+			}
+		});
+	</script>
+
+</html>

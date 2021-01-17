@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<h3>用户名下车辆信息新增</h3>
+		<div id="app1">
+			<el-form :model="AddUserCarMessage" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+				<div>
+					<el-input placeholder="请输入车牌号" v-model="AddUserCarMessage.cno">
+						<template slot="prepend">*车牌号</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入客户编号" v-model="AddUserCarMessage.clientno">
+						<template slot="prepend">*客户编号</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入维修编号" v-model="AddUserCarMessage.inid">
+						<template slot="prepend">*维修编号</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入车辆品牌id" v-model="AddUserCarMessage.Brandid">
+						<template slot="prepend">*车牌品牌id</template>
+					</el-input>
+				</div>
+				<div>
+					<el-input placeholder="请输入客户车辆进厂日期" v-model="AddUserCarMessage.jctdate">
+						<template slot="prepend">*客户车辆进厂日期</template>
+					</el-input>
+				</div>
+				<el-button type="primary" @click="cancel()">取消</el-button>
+				<el-button type="primary" @click="ensure()">确定</el-button>
+			</el-form>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script type="text/javascript" src="js/axios.min.js"></script>
+	<script type="text/javascript" src="js/axios_cfg.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script>
+		var app1 = new Vue({
+			el: "#app1",
+			data: {
+				ConnectionPerson: {},
+				AddUserCarMessage: {
+					cno: "",
+					clientno: "",
+					inid: "",
+					Brandid: "",
+					jctdate: "",
+					column1: "24"
+				},
+				rules: {
+					cno: [{
+						required: true,
+						message: '请输入车牌号',
+						trigger: 'blur'
+					}, {
+						min: 3,
+						max: 5,
+						message: '长度在 3 到 5 个字符',
+						trigger: 'blur'
+					}],
+					clientno: [{
+						required: true,
+						message: '请选择客户编号',
+						trigger: 'change'
+					}],
+					inid: [{
+						type: 'String',
+						required: true,
+						message: '请选择维修编号',
+						trigger: 'change'
+					}],
+					Brandid: [{
+						type: 'String',
+						required: true,
+						message: '请选择车辆品牌编号',
+						trigger: 'change'
+					}],
+					jctdate: [{
+						type: 'array',
+						required: true,
+						message: '请至少选择客户进厂维修日期',
+						trigger: 'change'
+					}]
+				}
+			},
+			mounted() {
+				this.queryConnection();
+			},
+			methods: {
+				queryConnection() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NJEmployeeAction/queryAll`)
+							.then(function(resp) {
+								_this.ConnectionPerson = resp.data;
+							});
+					},
+					cancel() {
+						this.$alert('您正在执行返回操作', '执行返回', {
+							confirmButtonText: '确定',
+							callback: action => {
+								this.$message({
+									type: 'info',
+									message: `action: ${ action }`
+								});
+							}
+						});
+					},
+					ensure() {
+						let _this = this;
+						axios.post(`http://127.0.0.1:8080/DZWWeb/nj/api/NjClientcarAction/insert`, this.AddUserCarMessage).then(resp => {
+							if (resp.data == true) {
+								this.$message({
+									message: "新增用户成功",
+									type: 'success'
+								});
+							}
+						})
+					}
+			}
+		});
+	</script>
+
+</html>

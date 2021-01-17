@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>发票</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<style>
+		ul,
+		ul li {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		
+		label {
+			color: #9c5223;
+		}
+		
+		.invoicMain {
+			width: 920px;
+			margin: 0 auto;
+			font-size: 14px;
+			color: #000;
+		}
+		
+		.invoiceHeader {
+			height: 126px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		
+		.headerLeft li:nth-child(1) {
+			text-indent: 1em;
+		}
+		
+		.headerLeft li img {
+			width: 105px;
+			height: 105px;
+		}
+		
+		.headerMiddle h1 {
+			font-size: 32px;
+			color: #9c5223;
+			font-family: 'kaiti';
+			margin: 5px 12px;
+		}
+		
+		.line {
+			height: 2px;
+			border-top: #9c5223 1px solid;
+			border-bottom: #9c5223 1px solid;
+		}
+		
+		.headerRight li {
+			line-height: 24px;
+		}
+		
+		.invoiceBody {
+			border: 1px solid #9c5223;
+		}
+		
+		.userInfo {
+			width: 100%;
+			display: flex;
+			align-items: center;
+			height: 96px;
+			border-bottom: 1px solid #9c5223;
+		}
+		
+		.userInfo ul {
+			width: 50%;
+			margin: 0 5px;
+			padding: 0;
+		}
+		
+		.userInfo ul li {
+			line-height: 24px;
+		}
+		
+		.buy {
+			width: 20px;
+			border-right: 1px solid #9c5223;
+			padding: 0 10px;
+			text-align: center;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			color: #9c5223;
+		}
+		
+		.password {
+			width: 20px;
+			padding: 0 10px;
+			border-right: 1px solid #9c5223;
+			border-left: 1px solid #9c5223;
+			text-align: center;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			color: #9c5223;
+		}
+		
+		.pwdInfo {
+			flex: 1;
+			padding-left: 5px;
+		}
+		
+		.goodsInfo {
+			height: 210px;
+			margin: 0;
+			padding: 0;
+		}
+		
+		.goodsInfo li {
+			display: flex;
+			color: #9c5223;
+			text-align: center;
+		}
+		
+		.name {
+			width: 260px;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.spec {
+			width: 140px;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.qty {
+			width: 108px;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.unit,
+		.taxRate {
+			width: 65px;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.qty,
+		.price {
+			width: 160px;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.money {
+			flex: 1;
+			border-right: 1px solid #9c5223;
+		}
+		
+		.taxAmount {
+			flex: 1;
+		}
+		
+		.GoodsTable {
+			height: 210px;
+			width: 100%;
+			border-collapse: collapse;
+		}
+		
+		.GoodsTable td {
+			border-right: 1px solid #9c5223;
+			color: #9c5223;
+		}
+		
+		.GoodsTable tr:nth-child(1),
+		.GoodsTable tr:nth-last-child(2) {
+			height: 24px;
+		}
+		
+		.GoodsTable tr:nth-last-child(1) {
+			height: 34px;
+		}
+		
+		.GoodsTable tr:nth-child(1) td {
+			text-align: center;
+		}
+		
+		.GoodsTotal {
+			border-top: 1px solid #9c5223;
+			border-bottom: 1px solid #9c5223;
+		}
+		
+		.total td:nth-child(1) {
+			text-align: center;
+		}
+		
+		.invoicetFooter {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: space-between;
+		}
+		
+		.invoicetFooter li {
+			width: 25%;
+		}
+	</style>
+
+	<body>
+
+		<div id="invoicMain" class="invoicMain">
+			<div class="invoiceHeader">
+				<ul class="headerLeft">
+					<li>
+						<img src="img/2018-03-16 204227.jpg" alt="">
+					</li>
+					<li>
+						<label>机器编号：</label><span></span>
+					</li>
+				</ul>
+				<div class="headerMiddle">
+					<h1>湖南省张来遇汽修厂增值税专用发票</h1>
+					<div class="line"></div>
+				</div>
+				<ul class="headerRight">
+					<li>
+						<label> 发票代码： </label><span>湖南省增值税</span>
+					</li>
+					<li>
+						<label> 发票号码： </label><span>9652562349562</span>
+					</li>
+					<li>
+						<label> 开票日期： </label><span>2021-1-15</span>
+					</li>
+					<li>
+						<label> 校&nbsp;&nbsp;验&nbsp;&nbsp;码： </label><span>123456</span>
+					</li>
+				</ul>
+			</div>
+			<div class="invoiceBody">
+				<div class="userInfo">
+					<div class="buy">购买方</div>
+					<ul>
+						<li>
+							<label>名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label><span>{{CaculationList.cno}}</span>
+						</li>
+						<li>
+							<label>纳税人识别号：</label><span>1234665986513231</span>
+						</li>
+						<li>
+							<label>地址、&nbsp;&nbsp;&nbsp;电话：</label><span>19756332561</span>
+						</li>
+						<li>
+							<label>开户行及账号：</label><span>支付宝</span>
+						</li>
+					</ul>
+					<div class="password">密码区</div>
+					<div class="pwdInfo">aaa</div>
+				</div>
+				<div>
+					<table class="GoodsTable" cellpadding="0" cellspacing="0">
+						<tr>
+							<td style="width: 24%">货物或应税劳务、服务名称 </td>
+							<td style="width: 10%">规格型号</td>
+							<td style="width: 7%">单位</td>
+							<td style="width: 10%">数量</td>
+							<td style="width: 10%">单价</td>
+							<td style="width: 16%">金额</td>
+							<td style="width: 7%">税率</td>
+							<td style="width: 16%; border-right: none;">税额</td>
+						</tr>
+						<tr>
+							<td>{{CaculationList.cno}}汽修相应费用</td>
+							<td>{{CaculationList.tid}}班组负责</td>
+							<td>{{CaculationList.casid}}负责收银</td>
+							<td>{{CaculationList.zhgs}}小时</td>
+							<td>{{CaculationList.jyjg}}</td>
+							<td>{{CaculationList.RealPay}}</td>
+							<td>增值税</td>
+							<td>增值税</td>
+						</tr>
+
+						<tr class="total">
+							<td>合计</td>
+							<td>{{CaculationList.RealPay}}</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr class="GoodsTotal">
+							<td>价税合计(大写)</td>
+							<td colspan="7">
+								<div style="width: 100%;display:flex">
+									<div type="text" style="width: 60%">{{CaculationList.RealPay}}</div>
+
+									<div type="text" style="width: 30%"> (小写){{CaculationList.RealPay}}</div>
+								</div>
+
+							</td>
+						</tr>
+					</table>
+					<div class="userInfo">
+						<div class="buy">购买方</div>
+						<ul>
+							<li>
+								<label>名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：</label><span>11111</span>
+							</li>
+							<li>
+								<label>纳税人识别号：</label><span>{{CaculationList.cno}}</span>
+							</li>
+							<li>
+								<label>地址、&nbsp;&nbsp;&nbsp;电话：</label><span>湖南省株洲市石峰区汽修厂</span>
+							</li>
+							<li>
+								<label>开户行及账号：</label><span>支付宝</span>
+							</li>
+						</ul>
+						<div class="password">备注</div>
+						<div class="pwdInfo">aaa</div>
+					</div>
+				</div>
+				<!-- <ul class="goodsInfo">
+                <li>
+                    <div class="name">货物或应税劳务、服务名称 </div>
+                    <div class="spec"> 规格型号 </div>
+                    <div class="unit"> 单位 </div>
+                    <div class="qty"> 数量</div>
+                    <div class="price"> 单价 </div>
+                    <div class="money"> 金额 </div>
+                    <div class="taxRate">税率 </div>
+                    <div class="taxAmount">税额 </div>
+                </li>
+            </ul> -->
+			</div>
+			<ul class="invoicetFooter">
+				<li>
+					<label>{{CaculationList.inid}}</label>
+				</li>
+				<li>
+					<label>复核：{{CaculationList.cno}}</label>
+				</li>
+				<li>
+					<label>开票人：{{CaculationList.casid}}</label>
+				</li>
+				<li>
+					<label>销售方：（章）湖南省株洲市石峰区汽修厂</label>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/vue.js"></script>
+	<script src="js/jquery-1.12.4.js"></script>
+	<script>
+		var app = new Vue({
+			el: "#invoicMain",
+			data: {
+				CaculationList: {
+					inid: "", //维修编号
+					wid: "", //车辆id
+					statusid: "", //状态id
+					casid: "", //收银id
+					tid: "", //班组id
+					workcarjlid: "", //救援车派出记录id
+					cno: "", //车牌号
+					izt: "", //维修状态
+					jdate: "", //进厂日期
+					jcday: "", //接车时间
+					yjday: "", //预计完工时间
+					wgday: "", //完工日期
+					iszn: "", //是否站内
+					lc: "", //里程数
+					ifjs: "", //是否结算
+					insevent: "", //维修备注
+					zjy: "", //质检员
+					zrr: "", //责任人
+					zhgs: "", //总耗工时
+					jyjg: "", //救援价格
+					xqid: "", //详情id
+					itemsid: "", //维修项目id
+					xqname: "", //商品名称
+					xqsl: "", //商品数量
+					spid: "", //商品id
+					zt: "", //维修状态
+					xmoney: "", //维修金额
+					xdate: "", //维修日期
+					RealPay: ""
+				},
+				InststionDetail: [],
+			},
+			mounted() {
+				this.CaculationList = weixiukaidan.CaculationList;
+				console.log(weixiukaidan.CaculationList);
+				//this.selectAllDetail();
+			},
+			method() {
+				
+			}
+		});
+	</script>
+
+</html>
