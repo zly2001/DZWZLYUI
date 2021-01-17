@@ -80,7 +80,7 @@
 			</el-row>
 			<el-row>
 				<el-col :span="4" :offset="1">
-					<el-checkbox label="*员工资料"></el-checkbox>
+					<el-checkbox label="*员工资料" ></el-checkbox>
 				</el-col>
 			</el-row>
 			<el-row>
@@ -171,6 +171,11 @@
 					<el-checkbox label="①车辆资料"></el-checkbox>
 				</el-col>
 			</el-row>
+			
+			
+			<el-checkbox-group v-model="form.checkList">
+				<el-checkbox v-for="date in caozuo" :label="date.fid" :key="date.fid" @change="handleCheckedCitiesChange">{{date.fname}}</el-checkbox>
+			</el-checkbox-group>
 		</div>
 	</body>
 	
@@ -180,6 +185,14 @@
 			data:{
 				eposition:[{}],
 				positionId:1,
+				quanxian:{},
+//				yuangongQ: false,
+				caozuo: [
+						{}		
+					],
+				form: {
+					checkList: [1,3,4],
+				}
 			},
 			mounted() {
 				this.load();
@@ -190,10 +203,41 @@
 					//下拉岗位表
 					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjPositionAction").then(function(resp) {
 						_this.eposition = resp.data;
-						console.log(_this.eposition)
+						//console.log(_this.eposition)
 					}).catch(function(e) {
 						console.info(e);
 					});
+					this.queryQuan();
+					this.queryFunction();
+				},
+				queryQuan(){
+					//权限读取
+					let _this = this;
+					//alert(_this.positionId)
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjAuthorityAction/query/"+this.positionId).then(function(resp) {
+						_this.quanxian = resp.data;
+						//_this.yuangong();
+						//alert(_this.quanxian)
+						console.log(_this.quanxian)
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+				//操作读取
+				queryFunction(){
+					let _this = this;
+					//alert(_this.positionId)
+					axios.get("http://127.0.0.1:8080/DZWWeb/qj/api/QjFunctionAction").then(function(resp) {
+						_this.caozuo = resp.data;
+						//_this.yuangong();
+						//alert(_this.quanxian)
+						console.log(_this.caozuo)
+					}).catch(function(e) {
+						console.info(e);
+					});
+				},
+				handleCheckedCitiesChange(value) {
+					//alert(this.form.checkList)
 				},
 			},
 		})
