@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title></title>
-		<!--<link rel="stylesheet" href="../../css/index.css" />-->
+		<link rel="stylesheet" href="../../css/index.css" />
 	</head>
 	<style>
 
@@ -26,20 +26,20 @@
 			</el-tree>
 
 			<div class="buttons">
-				<!--<el-button @click="getCheckedNodes">通过 node 获取</el-button>-->
+				<el-button @click="getCheckedNodes">通过 node 获取</el-button>
 				<el-button @click="getCheckedKeys">通过 key 获取</el-button>
-				<!--<el-button @click="setCheckedNodes">通过 node 设置</el-button>
-				<el-button @click="setCheckedKeys">通过 key 设置</el-button>-->
+				<el-button @click="setCheckedNodes">通过 node 设置</el-button>
+				<el-button @click="setCheckedKeys">通过 key 设置</el-button>
 				<el-button @click="resetChecked">清空</el-button>
 			</div>
 		</div>
 	</body>
-	<!--	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="../../js/vue.js"></script>
 	<script type="text/javascript" src="../../js/axios.min.js"></script>
 	<script type="text/javascript" src="../../js/axios_cfg.js"></script>
 
-	<script type="text/javascript" src="../../js/index.js"></script>-->
+	<script type="text/javascript" src="../../js/index.js"></script>
 	<script>
 		var a = new Vue({
 			el: "#a",
@@ -96,13 +96,6 @@
 					},
 					resetChecked() {
 						this.$refs.tree.setCheckedKeys([]);
-					},
-					s() {
-						axios.get("http://127.0.0.1:8080/DZWWeb//qj/api/QjPositionAction").then(function(resp) {
-							_this.Position = resp.data;
-						}).catch(function(e) {
-							console.info(e);
-						});
 					}
 			},
 			mounted() {
@@ -112,7 +105,11 @@
 				}).catch(function(e) {
 					console.info(e);
 				});
-				this.s();
+				axios.get("http://127.0.0.1:8080/DZWWeb//qj/api/QjPositionAction").then(function(resp) {
+					_this.Position = resp.data;
+				}).catch(function(e) {
+					console.info(e);
+				});
 			}
 		});
 	</script>
